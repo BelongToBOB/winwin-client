@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 
 const navItems = [
   { to: '/overview',       label: 'Overview',       dot: 'bg-blue-500' },
+  { to: '/seminars',       label: 'Seminars',       dot: 'bg-[#AF52DE]' },
   { to: '/registrations',  label: 'Registrations',  dot: 'bg-emerald-500' },
   { to: '/crm',            label: 'CRM Pipeline',   dot: 'bg-amber-500' },
   { to: '/report',         label: 'Report',         dot: 'bg-gray-400' },

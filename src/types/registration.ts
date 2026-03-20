@@ -1,5 +1,6 @@
 export interface Registration {
   id: string
+  registrant_id: string
   first_name: string
   last_name: string
   nickname: string
@@ -36,4 +37,18 @@ export interface SeminarSummary {
   total: number
   attended: number
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled'
+}
+
+export interface CourseEvent {
+  id: string
+  seminar_id: string
+  course_name: string
+  course_type: string
+  event_date: string
+  venue: string
+  delivery_mode: string
+  max_seats: number
+  price: number
+  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled'
+  total_registrations: number
 }

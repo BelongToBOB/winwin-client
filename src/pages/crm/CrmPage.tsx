@@ -34,6 +34,7 @@ export function CrmPage() {
         open={!!selectedContact}
         onClose={() => setSelectedContact(null)}
         data={selectedContact}
+        overdueOnly={isOverdueOnly}
       />
     </div>
   )
