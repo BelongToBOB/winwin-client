@@ -9,10 +9,10 @@ export function useUrlFilters<T extends Record<string, string>>(defaults: T) {
   ) as T
 
   const setFilter = useCallback(
-    (key: keyof T, value: string) => {
+    (key: string, value: string) => {
       setParams((prev) => {
         const next = new URLSearchParams(prev)
-        value ? next.set(key as string, value) : next.delete(key as string)
+        value ? next.set(key, value) : next.delete(key)
         return next
       }, { replace: true })
     },

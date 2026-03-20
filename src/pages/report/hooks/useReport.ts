@@ -5,7 +5,7 @@ import type { ReportType, ReportRow } from '@/types/report'
 
 export function useReportPreview(seminarId: string, type: ReportType | '') {
   return useQuery({
-    queryKey: qk.reportPreview ? qk.reportPreview(seminarId, type) : ['report', 'preview', seminarId, type],
+    queryKey: qk.report(seminarId, type),
     queryFn: async () => {
       if (!seminarId || !type) return []
       const { data } = await api.get<ReportRow[]>('/report/preview', {

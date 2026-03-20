@@ -22,7 +22,7 @@ export function ReportPage() {
 
   return (
     <div className="flex flex-col h-full gap-5">
-      <ReportBuilder filters={filters} setFilter={setFilter} />
+      <ReportBuilder filters={{ ...filters, report_type: filters.report_type as ReportType | '' }} setFilter={setFilter} />
 
       <div className="bg-white/80 dark:bg-[#1C1C1E]/80 backdrop-blur-xl rounded-2xl border border-black/[0.08] dark:border-white/[0.08] overflow-hidden flex-1">
         {(!filters.seminar_id || !filters.report_type) ? (

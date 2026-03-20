@@ -17,8 +17,7 @@ export function FilterBar({ filters, setFilter }: FilterBarProps) {
   const searchRef = useRef<HTMLInputElement>(null)
 
   useKeyboard({
-    '/': (e: KeyboardEvent) => {
-      e.preventDefault()
+    '/': () => {
       searchRef.current?.focus()
     }
   })

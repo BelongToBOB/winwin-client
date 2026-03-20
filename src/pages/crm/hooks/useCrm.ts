@@ -5,7 +5,7 @@ import type { CrmStage, Followup } from '@/types/crm'
 
 export function useCrmStages() {
   return useQuery({
-    queryKey: qk.crmStages ? qk.crmStages() : ['crm', 'stages'],
+    queryKey: qk.crmStages(),
     queryFn: async () => {
       const { data } = await api.get<CrmStage[]>('/crm/stages')
       return data
@@ -21,7 +21,7 @@ interface UseCrmFollowupsFilters {
 
 export function useCrmFollowups({ seminar_id, overdue_only }: UseCrmFollowupsFilters) {
   return useQuery({
-    queryKey: qk.crmFollowups ? qk.crmFollowups({ seminar_id, overdue_only }) : ['crm', 'followups', seminar_id, overdue_only],
+    queryKey: qk.crmFollowups(overdue_only ?? false),
     queryFn: async () => {
       const { data } = await api.get<Followup[]>('/crm/followups', {
         params: { seminar_id, overdue_only }

@@ -13,7 +13,7 @@ interface UseRegistrationsFilters {
 
 export function useRegistrations(filters: UseRegistrationsFilters) {
   return useQuery({
-    queryKey: qk.registrations ? qk.registrations(filters) : ['registrations', filters],
+    queryKey: qk.registrations(filters as Record<string, string>),
     queryFn: async () => {
       const { data } = await api.get<Registration[]>('/registrations', {
         params: filters
