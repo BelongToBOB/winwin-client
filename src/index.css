@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Apple system colors — light */
+    --apple-blue:       #007AFF;
+    --apple-green:      #34C759;
+    --apple-orange:     #FF9500;
+    --apple-red:        #FF3B30;
+    --apple-purple:     #AF52DE;
+    --apple-teal:       #5AC8FA;
+
+    /* Backgrounds — light (matches macOS window layering) */
+    --bg-base:          #F2F2F7;   /* macOS window background */
+    --bg-elevated:      #FFFFFF;   /* card surface */
+    --bg-sidebar:       rgba(255,255,255,0.72);
+    --bg-input:         rgba(120,120,128,0.12);
+    --bg-hover:         rgba(0,0,0,0.04);
+
+    /* Text — light */
+    --text-primary:     #000000;
+    --text-secondary:   rgba(60,60,67,0.6);
+    --text-tertiary:    rgba(60,60,67,0.3);
+
+    /* Separators — light */
+    --separator:        rgba(60,60,67,0.12);
+    --separator-opaque: #C6C6C8;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      /* Backgrounds — dark (macOS dark mode layering) */
+      --bg-base:          #000000;
+      --bg-elevated:      #1C1C1E;
+      --bg-sidebar:       rgba(28,28,30,0.72);
+      --bg-input:         rgba(118,118,128,0.24);
+      --bg-hover:         rgba(255,255,255,0.06);
+
+      /* Text — dark */
+      --text-primary:     #FFFFFF;
+      --text-secondary:   rgba(235,235,245,0.6);
+      --text-tertiary:    rgba(235,235,245,0.3);
+
+      /* Separators — dark */
+      --separator:        rgba(84,84,88,0.6);
+      --separator-opaque: #38383A;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    color: var(--text-primary);
+    background-color: var(--bg-base);
+  }
+}
