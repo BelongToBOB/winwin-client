@@ -38,6 +38,8 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
     loan_problems: data?.loan_problems ?? '',
   })
 
+  const [saveError, setSaveError] = useState<string | null>(null)
+
   useEffect(() => {
     if (data) {
       setForm({
@@ -51,12 +53,12 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
       })
       setEditing(false)
       setConfirmDelete(false)
+      setSaveError(null)
     }
   }, [data])
 
   if (!data) return null
 
-  const [saveError, setSaveError] = useState<string | null>(null)
   const set = (k: string, v: string | boolean) => setForm(f => ({ ...f, [k]: v }))
   const loading = updateStatus.isPending || updateProfile.isPending
 
