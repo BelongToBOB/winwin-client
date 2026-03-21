@@ -9,10 +9,10 @@ interface CourseEvent {
 }
 
 const titleMap: Record<string, { title: string; subtitle: string }> = {
-  '/overview': { title: 'Overview', subtitle: 'สรุปภาพรวมทั้งหมด' },
-  '/registrations': { title: 'Registrations', subtitle: 'รายชื่อผู้ลงทะเบียนเข้าสัมมนา' },
-  '/crm': { title: 'CRM Pipeline', subtitle: 'ติดตามสถานะการขายและการกู้' },
-  '/report': { title: 'Report', subtitle: 'สร้างและส่งออกรายงาน' },
+  '/overview': { title: 'ภาพรวม', subtitle: 'สรุปภาพรวมทั้งหมด' },
+  '/registrations': { title: 'ผู้ลงทะเบียน', subtitle: 'รายชื่อผู้ลงทะเบียนเข้าสัมมนา' },
+  '/crm': { title: 'ติดตามลูกค้า', subtitle: 'ติดตามสถานะการขายและการกู้' },
+  '/report': { title: 'รายงาน', subtitle: 'สร้างและส่งออกรายงาน' },
 }
 
 export function Topbar() {

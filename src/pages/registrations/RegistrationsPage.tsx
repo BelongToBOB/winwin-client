@@ -23,11 +23,11 @@ export function RegistrationsPage() {
 
   const renderStatusBadge = (status: string) => {
     switch (status) {
-      case 'pending':   return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-black/[0.06] text-black/50 dark:bg-white/[0.08] dark:text-white/50">PENDING</span>
-      case 'confirmed': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#007AFF]/10 text-[#007AFF]">CONFIRMED</span>
-      case 'attended':  return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#34C759]/12 text-[#34C759]">ATTENDED</span>
-      case 'no_show':   return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#FF3B30]/10 text-[#FF3B30]">NO SHOW</span>
-      case 'cancelled': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-black/[0.06] text-black/30 dark:bg-white/[0.06] dark:text-white/30">CANCELLED</span>
+      case 'pending':   return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-black/[0.06] text-black/50 dark:bg-white/[0.08] dark:text-white/50">รอดำเนินการ</span>
+      case 'confirmed': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#007AFF]/10 text-[#007AFF]">ยืนยันแล้ว</span>
+      case 'attended':  return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#34C759]/12 text-[#34C759]">เข้าร่วมแล้ว</span>
+      case 'no_show':   return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#FF3B30]/10 text-[#FF3B30]">ไม่มา</span>
+      case 'cancelled': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-black/[0.06] text-black/30 dark:bg-white/[0.06] dark:text-white/30">ยกเลิก</span>
       default: return null
     }
   }
@@ -56,8 +56,8 @@ export function RegistrationsPage() {
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ชื่อ–นามสกุล</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ชื่อเล่น</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">อาชีพ</th>
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">Channel</th>
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">Loan range</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ช่องทาง</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">วงเงินกู้</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">เคยกู้</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">สถานะ</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">วันลงทะเบียน</th>

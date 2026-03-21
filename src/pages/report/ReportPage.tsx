@@ -13,9 +13,9 @@ export function ReportPage() {
 
   const reportTypeLabelMap: Record<string, string> = {
     'registration_summary': 'สรุปการลงทะเบียน',
-    'loan_profile': 'Loan profile breakdown',
-    'crm_pipeline': 'CRM pipeline',
-    'attendance': 'Attendance report'
+    'loan_profile': 'สรุปข้อมูลสินเชื่อ',
+    'crm_pipeline': 'สรุป CRM pipeline',
+    'attendance': 'สรุปการเข้าร่วม'
   }
 
   const selectedLabel = filters.report_type ? reportTypeLabelMap[filters.report_type] : ''
@@ -31,7 +31,7 @@ export function ReportPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
             <p className="text-[13px] text-black/40 dark:text-white/40">
-              เลือก seminar และประเภท report เพื่อดู preview
+              เลือกสัมมนาและประเภทรายงานเพื่อดูตัวอย่าง
             </p>
           </div>
         ) : (
@@ -45,8 +45,8 @@ export function ReportPage() {
               <table className="w-full text-[13px]">
                 <thead>
                   <tr className="border-b border-black/[0.06] dark:border-white/[0.06]">
-                    <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 w-1/2">Metric</th>
-                    <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 w-1/2">Value</th>
+                    <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 w-1/2">ตัวชี้วัด</th>
+                    <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 w-1/2">ค่า</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -66,7 +66,7 @@ export function ReportPage() {
                   ))}
                   {!isLoading && data?.length === 0 && (
                      <tr>
-                       <td colSpan={2} className="px-4 py-12 text-center text-black/40 dark:text-white/40">ไม่พบข้อมูล Preview</td>
+                       <td colSpan={2} className="px-4 py-12 text-center text-black/40 dark:text-white/40">ไม่พบข้อมูลตัวอย่าง</td>
                      </tr>
                   )}
                 </tbody>

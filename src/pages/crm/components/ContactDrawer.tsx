@@ -130,15 +130,15 @@ export function ContactDrawer({ open, onClose, data, overdueOnly }: ContactDrawe
               </select>
             </FormField>
 
-            <FormField label="Assigned to">
+            <FormField label="ผู้ดูแล">
               <input className={inputCls} value={form.assigned_to} onChange={e => set('assigned_to', e.target.value)} placeholder="ชื่อ sales" />
             </FormField>
 
             <div className="grid grid-cols-2 gap-4">
-              <FormField label="Last contacted">
+              <FormField label="ติดต่อล่าสุด">
                 <input type="date" className={inputCls} value={form.last_contacted} onChange={e => set('last_contacted', e.target.value)} />
               </FormField>
-              <FormField label="Next follow-up">
+              <FormField label="ติดตามครั้งต่อไป">
                 <input type="date" className={inputCls} value={form.next_followup} onChange={e => set('next_followup', e.target.value)} />
               </FormField>
             </div>
@@ -166,19 +166,19 @@ export function ContactDrawer({ open, onClose, data, overdueOnly }: ContactDrawe
         ) : (
           <div className="grid grid-cols-2 gap-4 text-[13px]">
             <div>
-              <div className="text-black/40 dark:text-white/40 mb-1">Assigned to</div>
+              <div className="text-black/40 dark:text-white/40 mb-1">ผู้ดูแล</div>
               <div className="text-black/80 dark:text-white/80">{data.assigned_to || '-'}</div>
             </div>
             <div>
-              <div className="text-black/40 dark:text-white/40 mb-1">Channel</div>
+              <div className="text-black/40 dark:text-white/40 mb-1">ช่องทาง</div>
               <div className="text-black/80 dark:text-white/80">{data.channel || '-'}</div>
             </div>
             <div>
-              <div className="text-black/40 dark:text-white/40 mb-1">Last contacted</div>
+              <div className="text-black/40 dark:text-white/40 mb-1">ติดต่อล่าสุด</div>
               <div className="text-black/80 dark:text-white/80">{formatDate(data.last_contacted) || '-'}</div>
             </div>
             <div>
-              <div className="text-black/40 dark:text-white/40 mb-1">Next follow-up</div>
+              <div className="text-black/40 dark:text-white/40 mb-1">ติดตามครั้งต่อไป</div>
               <div className="text-black/80 dark:text-white/80">{formatDate(data.next_followup) || '-'}</div>
             </div>
             <div className="col-span-2">
@@ -194,7 +194,7 @@ export function ContactDrawer({ open, onClose, data, overdueOnly }: ContactDrawe
         {/* Interactions */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[13px] font-medium text-black/70 dark:text-white/70">Interactions</span>
+            <span className="text-[13px] font-medium text-black/70 dark:text-white/70">ประวัติการติดต่อ</span>
             <button
               onClick={() => setAddingInteraction(v => !v)}
               className="h-6 px-2.5 rounded-lg text-[11px] font-medium text-[#007AFF] bg-[#007AFF]/10 hover:bg-[#007AFF]/15 transition-colors"
@@ -206,13 +206,13 @@ export function ContactDrawer({ open, onClose, data, overdueOnly }: ContactDrawe
           {addingInteraction && (
             <div className="flex flex-col gap-3 mb-4 p-3 rounded-xl bg-black/[0.03] dark:bg-white/[0.03]">
               <div className="grid grid-cols-2 gap-3">
-                <FormField label="Channel">
+                <FormField label="ช่องทาง">
                   <input className={inputCls} value={interactionForm.channel} onChange={e => setIF('channel', e.target.value)} placeholder="Line, Call, Email..." />
                 </FormField>
-                <FormField label="Direction">
+                <FormField label="ทิศทาง">
                   <select className={inputCls} value={interactionForm.direction} onChange={e => setIF('direction', e.target.value)}>
-                    <option value="outbound">Outbound</option>
-                    <option value="inbound">Inbound</option>
+                    <option value="outbound">โทรออก/ทักไป</option>
+                    <option value="inbound">รับสาย/ทักมา</option>
                   </select>
                 </FormField>
               </div>
@@ -228,7 +228,7 @@ export function ContactDrawer({ open, onClose, data, overdueOnly }: ContactDrawe
                   disabled={createInteraction.isPending}
                   className="h-8 px-4 rounded-xl text-[12px] font-medium text-white bg-[#007AFF] hover:bg-[#007AFF]/90 disabled:opacity-50 transition-colors"
                 >
-                  {createInteraction.isPending ? 'กำลังบันทึก…' : 'บันทึก interaction'}
+                  {createInteraction.isPending ? 'กำลังบันทึก…' : 'บันทึกประวัติการติดต่อ'}
                 </button>
               </div>
             </div>
@@ -236,7 +236,7 @@ export function ContactDrawer({ open, onClose, data, overdueOnly }: ContactDrawe
 
           <div className="flex flex-col gap-2">
             {!interactions || interactions.length === 0 ? (
-              <p className="text-[12px] text-black/40 dark:text-white/40 py-2">ยังไม่มี interaction</p>
+              <p className="text-[12px] text-black/40 dark:text-white/40 py-2">ยังไม่มีประวัติการติดต่อ</p>
             ) : interactions.map(ix => (
               <div key={ix.id} className="flex items-start gap-3 p-3 rounded-xl bg-black/[0.03] dark:bg-white/[0.03]">
                 <div className="flex-1 min-w-0">

@@ -16,13 +16,13 @@ export function FollowupTable({ data = [], isLoading, overdueOnly, onToggleOverd
     <div className="bg-white/80 dark:bg-[#1C1C1E]/80 backdrop-blur-xl rounded-2xl border border-black/[0.08] dark:border-white/[0.08] overflow-hidden">
       <div className="px-5 py-3.5 border-b border-black/[0.06] dark:border-white/[0.06] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h3 className="text-[17px] font-semibold text-black dark:text-white">Follow-up ที่ต้องดำเนินการ</h3>
+          <h3 className="text-[17px] font-semibold text-black dark:text-white">รายการที่ต้องติดตาม</h3>
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#FF3B30]/10 text-[#FF3B30]">
-            {overdueCount} OVERDUE
+            {overdueCount} เกินกำหนด
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <label htmlFor="overdue-toggle" className="text-[13px] text-black/60 dark:text-white/60 cursor-pointer">เฉพาะที่เกิน due</label>
+          <label htmlFor="overdue-toggle" className="text-[13px] text-black/60 dark:text-white/60 cursor-pointer">เฉพาะที่เกินกำหนด</label>
           <input
             id="overdue-toggle"
             type="checkbox"
@@ -38,12 +38,12 @@ export function FollowupTable({ data = [], isLoading, overdueOnly, onToggleOverd
         <table className="w-full text-[13px]">
           <thead>
             <tr className="border-b border-black/[0.06] dark:border-white/[0.06]">
-              <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ชื่อ</th>
-              <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">Stage</th>
-              <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">Assigned to</th>
-              <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">Last contact</th>
-              <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">Next follow-up</th>
-              <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">Channel</th>
+              <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ชื่อ–นามสกุล</th>
+              <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">สถานะ</th>
+              <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ผู้ดูแล</th>
+              <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ติดต่อล่าสุด</th>
+              <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ติดตามครั้งต่อไป</th>
+              <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ช่องทาง</th>
               <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">หมายเหตุ</th>
             </tr>
           </thead>
@@ -83,7 +83,7 @@ export function FollowupTable({ data = [], isLoading, overdueOnly, onToggleOverd
             {!isLoading && data.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-16 text-center text-black/40 dark:text-white/40">
-                  ไม่มีรายการ Follow-up
+                  ไม่มีรายการที่ต้องติดตาม
                 </td>
               </tr>
             )}
@@ -96,12 +96,12 @@ export function FollowupTable({ data = [], isLoading, overdueOnly, onToggleOverd
 
 export function renderStageBadge(stage: string) {
   switch (stage) {
-    case 'new': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#007AFF]/10 text-[#007AFF]">NEW</span>
-    case 'contacted': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#FF9500]/12 text-[#FF9500]">CONTACTED</span>
-    case 'interested': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#AF52DE]/10 text-[#AF52DE]">INTERESTED</span>
-    case 'proposal': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#34C759]/12 text-[#34C759]">PROPOSAL</span>
-    case 'closed_won': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#34C759]/16 text-[#34C759] font-semibold">CLOSED WON</span>
-    case 'closed_lost': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#FF3B30]/10 text-[#FF3B30]">CLOSED LOST</span>
+    case 'new': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#007AFF]/10 text-[#007AFF]">ใหม่</span>
+    case 'contacted': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#FF9500]/12 text-[#FF9500]">ติดต่อแล้ว</span>
+    case 'interested': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#AF52DE]/10 text-[#AF52DE]">สนใจ</span>
+    case 'proposal': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#34C759]/12 text-[#34C759]">เสนอราคา</span>
+    case 'closed_won': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#34C759]/16 text-[#34C759] font-semibold">ปิดการขายได้</span>
+    case 'closed_lost': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#FF3B30]/10 text-[#FF3B30]">ปิดการขายไม่ได้</span>
     default: return null
   }
 }

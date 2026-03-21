@@ -4,11 +4,11 @@ import { cn } from '@/lib/utils'
 import { logout } from '@/components/auth/AuthGate'
 
 const navItems = [
-  { to: '/overview',       label: 'Overview',       dot: 'bg-blue-500' },
-  { to: '/seminars',       label: 'Seminars',       dot: 'bg-[#AF52DE]' },
-  { to: '/registrations',  label: 'Registrations',  dot: 'bg-emerald-500' },
-  { to: '/crm',            label: 'CRM Pipeline',   dot: 'bg-amber-500' },
-  { to: '/report',         label: 'Report',         dot: 'bg-gray-400' },
+  { to: '/overview',       label: 'ภาพรวม',       dot: 'bg-blue-500' },
+  { to: '/seminars',       label: 'สัมมนา',       dot: 'bg-[#AF52DE]' },
+  { to: '/registrations',  label: 'ผู้ลงทะเบียน',  dot: 'bg-emerald-500' },
+  { to: '/crm',            label: 'ติดตามลูกค้า',   dot: 'bg-amber-500' },
+  { to: '/report',         label: 'รายงาน',         dot: 'bg-gray-400' },
 ]
 
 export function Shell() {
@@ -18,7 +18,7 @@ export function Shell() {
       <aside className="fixed left-0 top-0 bottom-0 w-[240px] bg-white/72 dark:bg-[#1C1C1E]/72 backdrop-blur-2xl border-r border-black/[0.08] dark:border-white/[0.08] flex flex-col z-20">
         <div className="px-5 py-6">
           <h1 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">Win Win Wealth</h1>
-          <p className="text-xs text-gray-400 mt-0.5">Internal Dashboard</p>
+          <p className="text-xs text-gray-400 mt-0.5">ระบบจัดการภายใน</p>
         </div>
         
         <div className="px-4 mb-4">

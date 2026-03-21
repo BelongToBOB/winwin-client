@@ -9,12 +9,12 @@ interface StageBoardProps {
 const STAGE_ORDER: CrmStageValue[] = ['new', 'contacted', 'interested', 'proposal', 'closed_won', 'closed_lost']
 
 const STAGE_CONFIG: Record<string, { label: string; colorClass: string }> = {
-  new: { label: 'NEW', colorClass: 'text-[#007AFF]' },
-  contacted: { label: 'CONTACTED', colorClass: 'text-[#FF9500]' },
-  interested: { label: 'INTERESTED', colorClass: 'text-[#AF52DE]' },
-  proposal: { label: 'PROPOSAL', colorClass: 'text-[#34C759]' },
-  closed_won: { label: 'CLOSED WON', colorClass: 'text-[#34C759] font-semibold' },
-  closed_lost: { label: 'CLOSED LOST', colorClass: 'text-[#FF3B30]' },
+  new: { label: 'ใหม่', colorClass: 'text-[#007AFF]' },
+  contacted: { label: 'ติดต่อแล้ว', colorClass: 'text-[#FF9500]' },
+  interested: { label: 'สนใจ', colorClass: 'text-[#AF52DE]' },
+  proposal: { label: 'เสนอราคา', colorClass: 'text-[#34C759]' },
+  closed_won: { label: 'ปิดการขายได้', colorClass: 'text-[#34C759] font-semibold' },
+  closed_lost: { label: 'ปิดการขายไม่ได้', colorClass: 'text-[#FF3B30]' },
 }
 
 export function StageBoard({ stages = [], isLoading }: StageBoardProps) {

@@ -13,13 +13,13 @@ export function OverviewPage() {
   const renderStatusBadge = (status: string) => {
     switch (status) {
       case 'upcoming':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#007AFF]/10 text-[#007AFF]">UPCOMING</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#007AFF]/10 text-[#007AFF]">กำลังจะจัด</span>
       case 'ongoing':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#FF9500]/12 text-[#FF9500]">ONGOING</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#FF9500]/12 text-[#FF9500]">กำลังจัด</span>
       case 'completed':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#34C759]/12 text-[#34C759]">COMPLETED</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#34C759]/12 text-[#34C759]">จัดเสร็จแล้ว</span>
       case 'cancelled':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-black/[0.06] text-black/50 dark:bg-white/[0.08] dark:text-white/50">CANCELLED</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-black/[0.06] text-black/50 dark:bg-white/[0.08] dark:text-white/50">ยกเลิก</span>
       default:
         return null
     }
@@ -45,7 +45,7 @@ export function OverviewPage() {
             <MetricCard 
               label="เข้าร่วมจริง" 
               value={data?.attended || 0} 
-              delta={`${data?.attendance_rate || 0}% attendance rate`} 
+              delta={`อัตราการเข้าร่วม ${data?.attendance_rate || 0}%`} 
             />
             <MetricCard 
               label="เคยกู้มาก่อน" 
@@ -82,12 +82,12 @@ export function OverviewPage() {
           <table className="w-full text-[13px]">
             <thead>
               <tr className="border-b border-black/[0.06] dark:border-white/[0.06]">
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">Seminar ID</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">รหัสสัมมนา</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">หลักสูตร</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">วันจัด</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ลงทะเบียน</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">เข้าร่วม</th>
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">Attendance %</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">% เข้าร่วม</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">สถานะ</th>
               </tr>
             </thead>

@@ -45,11 +45,11 @@ export function FilterBar({ filters, setFilter }: FilterBarProps) {
         style={selectStyle}
       >
         <option value="">ทุกสถานะ</option>
-        <option value="pending">Pending</option>
-        <option value="confirmed">Confirmed</option>
-        <option value="attended">Attended</option>
-        <option value="no_show">No Show</option>
-        <option value="cancelled">Cancelled</option>
+        <option value="pending">รอดำเนินการ</option>
+        <option value="confirmed">ยืนยันแล้ว</option>
+        <option value="attended">เข้าร่วมแล้ว</option>
+        <option value="no_show">ไม่มา</option>
+        <option value="cancelled">ยกเลิก</option>
       </select>
 
       <select
@@ -58,7 +58,7 @@ export function FilterBar({ filters, setFilter }: FilterBarProps) {
         className="h-9 px-3 text-[13px] rounded-xl bg-black/[0.06] dark:bg-white/[0.08] border-0 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all duration-200 cursor-pointer appearance-none pr-8 relative"
         style={selectStyle}
       >
-        <option value="">ทุก job</option>
+        <option value="">ทุกอาชีพ</option>
         <option value="เจ้าของธุรกิจ/ธุรกิจส่วนตัว">เจ้าของธุรกิจ/ธุรกิจส่วนตัว</option>
         <option value="พนักงาน">พนักงาน</option>
         <option value="อื่นๆ">อื่นๆ</option>
@@ -70,7 +70,7 @@ export function FilterBar({ filters, setFilter }: FilterBarProps) {
         className="h-9 px-3 text-[13px] rounded-xl bg-black/[0.06] dark:bg-white/[0.08] border-0 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all duration-200 cursor-pointer appearance-none pr-8 relative"
         style={selectStyle}
       >
-        <option value="">ทุก loan range</option>
+        <option value="">ทุกวงเงินกู้</option>
         <option value="50k–100k">50k–100k</option>
         <option value="1M–5M">1M–5M</option>
         <option value="5M–10M">5M–10M</option>

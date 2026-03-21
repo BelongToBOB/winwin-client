@@ -36,7 +36,7 @@ export function AddRegistrantDrawer({ open, onClose, seminarId, filters }: AddRe
       return
     }
     if (!seminarId) {
-      setError('กรุณาเลือก Seminar ก่อน (ใช้ filter seminar_id)')
+      setError('กรุณาเลือกสัมมนาก่อน (ใช้ filter seminar_id)')
       return
     }
     let registrantId: string | null = null
@@ -60,7 +60,7 @@ export function AddRegistrantDrawer({ open, onClose, seminarId, filters }: AddRe
       setForm({ first_name: '', last_name: '', nickname: '', email: '', phone: '', job_category: '' })
       onClose()
     } catch {
-      setError('สร้างผู้ลงทะเบียนสำเร็จ แต่ไม่สามารถลงทะเบียน seminar ได้ กรุณาติดต่อ admin')
+      setError('สร้างผู้ลงทะเบียนสำเร็จ แต่ไม่สามารถลงทะเบียนสัมมนาได้ กรุณาติดต่อ admin')
     }
   }
 
@@ -86,7 +86,7 @@ export function AddRegistrantDrawer({ open, onClose, seminarId, filters }: AddRe
           <input className={inputCls} value={form.nickname} onChange={e => set('nickname', e.target.value)} placeholder="โจ" />
         </FormField>
 
-        <FormField label="Email">
+        <FormField label="อีเมล">
           <input type="email" className={inputCls} value={form.email} onChange={e => set('email', e.target.value)} placeholder="email@example.com" />
         </FormField>
 

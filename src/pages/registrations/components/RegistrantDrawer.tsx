@@ -81,11 +81,11 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
 
   const renderStatusBadge = (status: string) => {
     switch (status) {
-      case 'pending':   return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-black/[0.06] text-black/50 dark:bg-white/[0.08] dark:text-white/50">PENDING</span>
-      case 'confirmed': return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#007AFF]/10 text-[#007AFF]">CONFIRMED</span>
-      case 'attended':  return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#34C759]/12 text-[#34C759]">ATTENDED</span>
-      case 'no_show':   return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#FF3B30]/10 text-[#FF3B30]">NO SHOW</span>
-      case 'cancelled': return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-black/[0.06] text-black/30 dark:bg-white/[0.06] dark:text-white/30">CANCELLED</span>
+      case 'pending':   return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-black/[0.06] text-black/50 dark:bg-white/[0.08] dark:text-white/50">รอดำเนินการ</span>
+      case 'confirmed': return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#007AFF]/10 text-[#007AFF]">ยืนยันแล้ว</span>
+      case 'attended':  return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#34C759]/12 text-[#34C759]">เข้าร่วมแล้ว</span>
+      case 'no_show':   return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#FF3B30]/10 text-[#FF3B30]">ไม่มา</span>
+      case 'cancelled': return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-black/[0.06] text-black/30 dark:bg-white/[0.06] dark:text-white/30">ยกเลิก</span>
       default: return null
     }
   }
@@ -124,11 +124,11 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
         {/* Contact info */}
         <div className="grid grid-cols-2 gap-4 text-[13px]">
           <div>
-            <div className="text-black/40 dark:text-white/40 mb-1">Email</div>
+            <div className="text-black/40 dark:text-white/40 mb-1">อีเมล</div>
             <div className="text-black/80 dark:text-white/80">{data.email || '-'}</div>
           </div>
           <div>
-            <div className="text-black/40 dark:text-white/40 mb-1">Phone</div>
+            <div className="text-black/40 dark:text-white/40 mb-1">เบอร์โทรศัพท์</div>
             <div className="text-black/80 dark:text-white/80">{data.phone || '-'}</div>
           </div>
           <div>
@@ -144,16 +144,16 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
           <div className="flex flex-col gap-4">
             <FormField label="สถานะ">
               <select className={inputCls} value={form.reg_status} onChange={e => set('reg_status', e.target.value)}>
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="attended">Attended</option>
-                <option value="no_show">No Show</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="pending">รอดำเนินการ</option>
+                <option value="confirmed">ยืนยันแล้ว</option>
+                <option value="attended">เข้าร่วมแล้ว</option>
+                <option value="no_show">ไม่มา</option>
+                <option value="cancelled">ยกเลิก</option>
               </select>
             </FormField>
 
             <div className="grid grid-cols-2 gap-4">
-              <FormField label="Loan range">
+              <FormField label="วงเงินกู้">
                 <select className={inputCls} value={form.loan_amount_range} onChange={e => set('loan_amount_range', e.target.value)}>
                   <option value="">ไม่ระบุ</option>
                   <option value="< 100k">&lt; 100k</option>
@@ -175,7 +175,7 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
               <input className={inputCls} value={form.channels} onChange={e => set('channels', e.target.value)} placeholder="Facebook, Line..." />
             </FormField>
 
-            <FormField label="Credit banks">
+            <FormField label="ธนาคารที่เคยขอสินเชื่อ">
               <input className={inputCls} value={form.credit_banks} onChange={e => set('credit_banks', e.target.value)} placeholder="SCB, KBank..." />
             </FormField>
 
@@ -232,7 +232,7 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
                 <div className="text-black/80 dark:text-white/80">{data.channels || '-'}</div>
               </div>
               <div>
-                <div className="text-black/40 dark:text-white/40 mb-1">Loan range</div>
+                <div className="text-black/40 dark:text-white/40 mb-1">วงเงินกู้</div>
                 <div className="text-black/80 dark:text-white/80">{data.loan_amount_range || '-'}</div>
               </div>
               <div>
@@ -243,7 +243,7 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
                 }
               </div>
               <div>
-                <div className="text-black/40 dark:text-white/40 mb-1">Credit banks</div>
+                <div className="text-black/40 dark:text-white/40 mb-1">ธนาคารที่เคยขอสินเชื่อ</div>
                 <div className="text-black/80 dark:text-white/80">{data.credit_banks || '-'}</div>
               </div>
             </div>

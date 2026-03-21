@@ -28,32 +28,32 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-[13px] text-black/60 dark:text-white/60 mb-1.5">Seminar</label>
+          <label className="block text-[13px] text-black/60 dark:text-white/60 mb-1.5">สัมมนา</label>
           <select
             value={filters.seminar_id || ''}
             onChange={(e) => setFilter('seminar_id', e.target.value)}
             className="w-full h-9 px-3 text-[13px] rounded-xl bg-black/[0.06] dark:bg-white/[0.08] border-0 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all duration-200 cursor-pointer appearance-none pr-8 relative"
             style={selectStyle}
           >
-            <option value="">เลือก Seminar...</option>
+            <option value="">เลือกสัมมนา...</option>
             <option value="IB_MAR_2026">IB_MAR_2026</option>
             <option value="IB_FEB_2026">IB_FEB_2026</option>
           </select>
         </div>
         
         <div>
-          <label className="block text-[13px] text-black/60 dark:text-white/60 mb-1.5">ประเภท Report</label>
+          <label className="block text-[13px] text-black/60 dark:text-white/60 mb-1.5">ประเภทรายงาน</label>
           <select
             value={filters.report_type || ''}
             onChange={(e) => setFilter('report_type', e.target.value)}
             className="w-full h-9 px-3 text-[13px] rounded-xl bg-black/[0.06] dark:bg-white/[0.08] border-0 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all duration-200 cursor-pointer appearance-none pr-8 relative"
             style={selectStyle}
           >
-            <option value="">เลือกประเภท Report...</option>
+            <option value="">เลือกประเภทรายงาน...</option>
             <option value="registration_summary">สรุปการลงทะเบียน</option>
-            <option value="loan_profile">Loan profile breakdown</option>
-            <option value="crm_pipeline">CRM pipeline</option>
-            <option value="attendance">Attendance report</option>
+            <option value="loan_profile">สรุปข้อมูลสินเชื่อ</option>
+            <option value="crm_pipeline">สรุป CRM pipeline</option>
+            <option value="attendance">สรุปการเข้าร่วม</option>
           </select>
         </div>
       </div>
@@ -64,14 +64,14 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
           disabled={!filters.seminar_id || !filters.report_type}
           className="h-9 px-4 rounded-xl text-[13px] font-medium text-[#007AFF] bg-[#007AFF]/10 hover:bg-[#007AFF]/15 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none transition-all duration-150"
         >
-          Export CSV
+          ส่งออก CSV
         </button>
         <button 
           onClick={() => handleExport('pdf')}
           disabled={!filters.seminar_id || !filters.report_type}
           className="h-9 px-4 rounded-xl text-[13px] font-medium text-[#007AFF] bg-[#007AFF]/10 hover:bg-[#007AFF]/15 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none transition-all duration-150"
         >
-          Export PDF
+          ส่งออก PDF
         </button>
       </div>
     </div>
