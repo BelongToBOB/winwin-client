@@ -1,5 +1,12 @@
 import { useLocation } from 'react-router'
+import { useQuery } from '@tanstack/react-query'
 import { useUrlFilters } from '@/hooks/useUrlFilters'
+import { api } from '@/lib/api'
+import { qk } from '@/lib/queryKeys'
+
+interface CourseEvent {
+  seminar_id: string
+}
 
 const titleMap: Record<string, { title: string; subtitle: string }> = {
   '/overview': { title: 'Overview', subtitle: 'สรุปภาพรวมทั้งหมด' },
@@ -14,6 +21,15 @@ export function Topbar() {
   const { title, subtitle } = titleMap[currentPath]
 
   const { filters, setFilter } = useUrlFilters({ seminar_id: '' })
+
+  const { data: seminars = [] } = useQuery({
+    queryKey: qk.seminars(),
+    queryFn: async () => {
+      const { data } = await api.get<CourseEvent[]>('/course-events')
+      return data
+    },
+    staleTime: 1000 * 60 * 5,
+  })
 
   return (
     <header className="sticky top-0 z-10 bg-[#F2F2F7]/80 dark:bg-black/80 backdrop-blur-xl border-b border-black/[0.08] dark:border-white/[0.08] px-6 h-14 flex items-center justify-between">
@@ -35,8 +51,11 @@ export function Topbar() {
           }}
         >
           <option value="">ทุก seminar</option>
-          <option value="IB_MAR_2026">IB_MAR_2026</option>
-          <option value="IB_FEB_2026">IB_FEB_2026</option>
+          {seminars.map((s) => (
+            <option key={s.seminar_id} value={s.seminar_id}>
+              {s.seminar_id}
+            </option>
+          ))}
         </select>
       </div>
     </header>
