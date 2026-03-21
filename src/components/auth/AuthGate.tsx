@@ -4,17 +4,12 @@ const AUTH_KEY = 'ww_auth'
 const VALID_USER = 'winwin'
 const VALID_PASS = 'winwin2024'
 
-export function isAuthenticated() {
-  return localStorage.getItem(AUTH_KEY) === 'ok'
-}
-
 export function logout() {
   localStorage.removeItem(AUTH_KEY)
   window.location.reload()
 }
 
-export function AuthGate({ children }: { children: React.ReactNode }) {
-  const [authed, setAuthed] = useState(() => isAuthenticated())
+function LoginForm() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -23,14 +18,11 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     e.preventDefault()
     if (username === VALID_USER && password === VALID_PASS) {
       localStorage.setItem(AUTH_KEY, 'ok')
-      setAuthed(true)
-      setError('')
+      window.location.reload()
     } else {
       setError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง')
     }
   }
-
-  if (authed) return <>{children}</>
 
   return (
     <div className="min-h-screen bg-[#F2F2F7] dark:bg-black flex items-center justify-center">
@@ -38,7 +30,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
         <div className="bg-white/80 dark:bg-[#1C1C1E]/80 backdrop-blur-xl rounded-2xl border border-black/[0.08] dark:border-white/[0.08] p-8">
           <div className="mb-8 text-center">
             <h1 className="text-[20px] font-semibold text-black dark:text-white">Win Win Wealth</h1>
-            <p className="text-[13px] text-black/40 dark:text-white/40 mt-1">Internal Dashboard</p>
+            <p className="text-[13px] text-black/40 dark:text-white/40 mt-1">ระบบจัดการภายใน</p>
           </div>
 
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
@@ -85,4 +77,11 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
       </div>
     </div>
   )
+}
+
+export function AuthGate({ children }: { children: React.ReactNode }) {
+  if (localStorage.getItem(AUTH_KEY) !== 'ok') {
+    return <LoginForm />
+  }
+  return <>{children}</>
 }
