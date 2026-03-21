@@ -21,7 +21,7 @@ interface UseCrmFollowupsFilters {
 
 export function useCrmFollowups({ seminar_id, overdue_only }: UseCrmFollowupsFilters) {
   return useQuery({
-    queryKey: qk.crmFollowups(overdue_only ?? false),
+    queryKey: qk.crmFollowups(overdue_only ?? false, seminar_id),
     queryFn: async () => {
       const { data } = await api.get<Followup[]>('/crm/followups', {
         params: { seminar_id, overdue_only }

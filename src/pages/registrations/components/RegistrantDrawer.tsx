@@ -56,21 +56,27 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
 
   if (!data) return null
 
+  const [saveError, setSaveError] = useState<string | null>(null)
   const set = (k: string, v: string | boolean) => setForm(f => ({ ...f, [k]: v }))
   const loading = updateStatus.isPending || updateProfile.isPending
 
   const handleSave = async () => {
-    await updateStatus.mutateAsync({ id: data.id, reg_status: form.reg_status })
-    await updateProfile.mutateAsync({
-      registrationId: data.id,
-      loan_amount_range: form.loan_amount_range || undefined,
-      loan_before: form.loan_before,
-      credit_banks: form.credit_banks || undefined,
-      channels: form.channels || undefined,
-      objective: form.objective || undefined,
-      loan_problems: form.loan_problems || undefined,
-    })
-    setEditing(false)
+    setSaveError(null)
+    try {
+      await updateStatus.mutateAsync({ id: data.id, reg_status: form.reg_status })
+      await updateProfile.mutateAsync({
+        registrationId: data.id,
+        loan_amount_range: form.loan_amount_range || undefined,
+        loan_before: form.loan_before,
+        credit_banks: form.credit_banks || undefined,
+        channels: form.channels || undefined,
+        objective: form.objective || undefined,
+        loan_problems: form.loan_problems || undefined,
+      })
+      setEditing(false)
+    } catch {
+      setSaveError('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่')
+    }
   }
 
   const renderStatusBadge = (status: string) => {
@@ -214,6 +220,9 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
                 </button>
               </div>
             </div>
+            {saveError && (
+              <p className="text-[12px] text-[#FF3B30] text-right mt-1">{saveError}</p>
+            )}
           </div>
         ) : (
           <div className="flex flex-col gap-4 text-[13px]">

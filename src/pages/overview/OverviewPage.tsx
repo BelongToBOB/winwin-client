@@ -38,11 +38,9 @@ export function OverviewPage() {
           </>
         ) : (
           <>
-            <MetricCard 
-              label="ลงทะเบียนทั้งหมด" 
-              value={data?.total_registrations || 0} 
-              delta="+15% จากเดือนก่อน" 
-              deltaClassName="text-[#34C759]"
+            <MetricCard
+              label="ลงทะเบียนทั้งหมด"
+              value={data?.total_registrations || 0}
             />
             <MetricCard 
               label="เข้าร่วมจริง" 
@@ -53,7 +51,7 @@ export function OverviewPage() {
               label="เคยกู้มาก่อน" 
               value={data?.loan_before_pct || 0} 
               valueSuffix="%"
-              delta={`14 จาก ${data?.total_registrations || 0} คน`} 
+              delta={`${Math.round((data?.total_registrations || 0) * (data?.loan_before_pct || 0) / 100)} จาก ${data?.total_registrations || 0} คน`}
             />
             <MetricCard 
               label="CRM active" 

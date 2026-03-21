@@ -1,6 +1,7 @@
 import { Outlet, NavLink } from 'react-router'
 import { Topbar } from './Topbar'
 import { cn } from '@/lib/utils'
+import { logout } from '@/components/auth/AuthGate'
 
 const navItems = [
   { to: '/overview',       label: 'Overview',       dot: 'bg-blue-500' },
@@ -44,10 +45,14 @@ export function Shell() {
           ))}
         </nav>
 
-        <div className="p-5">
-          <p className="text-xs text-black/30 dark:text-white/30 truncate">
-            v0.1.0
-          </p>
+        <div className="p-5 flex items-center justify-between">
+          <p className="text-xs text-black/30 dark:text-white/30">v0.1.0</p>
+          <button
+            onClick={logout}
+            className="text-xs text-black/30 dark:text-white/30 hover:text-[#FF3B30] transition-colors"
+          >
+            ออกจากระบบ
+          </button>
         </div>
       </aside>
 

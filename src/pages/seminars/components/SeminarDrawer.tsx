@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Drawer } from '@/components/ui/Drawer'
 import { FormField } from '@/components/ui/FormField'
 import { useCreateSeminar, useUpdateSeminar } from '../hooks/useSeminars'
@@ -28,6 +28,28 @@ export function SeminarDrawer({ open, onClose, event }: SeminarDrawerProps) {
     price: event?.price?.toString() ?? '',
     status: event?.status ?? 'upcoming',
   })
+
+  useEffect(() => {
+    if (event) {
+      setForm({
+        seminar_id: event.seminar_id,
+        course_name: event.course_name,
+        course_type: event.course_type ?? '',
+        event_date: event.event_date?.slice(0, 10) ?? '',
+        venue: event.venue ?? '',
+        delivery_mode: event.delivery_mode ?? '',
+        max_seats: event.max_seats?.toString() ?? '',
+        price: event.price?.toString() ?? '',
+        status: event.status ?? 'upcoming',
+      })
+    } else {
+      setForm({
+        seminar_id: '', course_name: '', course_type: '',
+        event_date: '', venue: '', delivery_mode: '',
+        max_seats: '', price: '', status: 'upcoming',
+      })
+    }
+  }, [event])
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
 

@@ -39,6 +39,7 @@ export function AddRegistrantDrawer({ open, onClose, seminarId, filters }: AddRe
       setError('กรุณาเลือก Seminar ก่อน (ใช้ filter seminar_id)')
       return
     }
+    let registrantId: string | null = null
     try {
       const registrantRows = await createRegistrant.mutateAsync({
         first_name: form.first_name,
@@ -49,11 +50,17 @@ export function AddRegistrantDrawer({ open, onClose, seminarId, filters }: AddRe
         job_category: form.job_category || undefined,
       })
       const registrant = Array.isArray(registrantRows) ? registrantRows[0] : registrantRows
-      await createRegistration.mutateAsync({ registrant_id: registrant.id, seminar_id: seminarId })
+      registrantId = registrant.id
+    } catch {
+      setError('ไม่สามารถสร้างผู้ลงทะเบียนได้ กรุณาลองใหม่')
+      return
+    }
+    try {
+      await createRegistration.mutateAsync({ registrant_id: registrantId!, seminar_id: seminarId })
       setForm({ first_name: '', last_name: '', nickname: '', email: '', phone: '', job_category: '' })
       onClose()
     } catch {
-      setError('เกิดข้อผิดพลาด กรุณาลองใหม่')
+      setError('สร้างผู้ลงทะเบียนสำเร็จ แต่ไม่สามารถลงทะเบียน seminar ได้ กรุณาติดต่อ admin')
     }
   }
 

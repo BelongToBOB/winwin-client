@@ -3,16 +3,16 @@ export interface Registration {
   registrant_id: string
   first_name: string
   last_name: string
-  nickname: string
-  email: string
-  phone: string
-  job_category: string
-  channels: string
-  loan_amount_range: string
-  loan_before: boolean
-  credit_banks: string
-  objective: string
-  loan_problems: string
+  nickname?: string | null
+  email?: string | null
+  phone?: string | null
+  job_category?: string | null
+  channels?: string | null
+  loan_amount_range?: string | null
+  loan_before?: boolean | null
+  credit_banks?: string | null
+  objective?: string | null
+  loan_problems?: string | null
   reg_status: 'pending' | 'confirmed' | 'attended' | 'cancelled' | 'no_show'
   registered_at: string
   seminar_id: string
@@ -43,12 +43,13 @@ export interface CourseEvent {
   id: string
   seminar_id: string
   course_name: string
-  course_type: string
-  event_date: string
-  venue: string
-  delivery_mode: string
-  max_seats: number
-  price: number
+  course_type?: string | null
+  event_date?: string | null
+  venue?: string | null
+  delivery_mode?: string | null
+  max_seats?: number | null
+  price?: number | null
+  currency?: string
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled'
   total_registrations: number
 }

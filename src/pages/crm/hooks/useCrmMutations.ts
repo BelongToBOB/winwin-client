@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import { qk } from '@/lib/queryKeys'
 
-export function useUpdateContact(overdueOnly: boolean) {
+export function useUpdateContact(overdueOnly: boolean, seminarId?: string) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ id, ...data }: {
@@ -14,7 +14,7 @@ export function useUpdateContact(overdueOnly: boolean) {
       last_contacted?: string
     }) => api.patch(`/crm/contacts/${id}`, data).then(r => r.data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: qk.crmFollowups(overdueOnly) })
+      qc.invalidateQueries({ queryKey: qk.crmFollowups(overdueOnly, seminarId) })
       qc.invalidateQueries({ queryKey: qk.crmStages() })
     },
   })

@@ -5,9 +5,11 @@ import { RegistrationsPage } from '@/pages/registrations/RegistrationsPage'
 import { CrmPage } from '@/pages/crm/CrmPage'
 import { ReportPage } from '@/pages/report/ReportPage'
 import { SeminarsPage } from '@/pages/seminars/SeminarsPage'
+import { AuthGate } from '@/components/auth/AuthGate'
 
 export function App() {
   return (
+    <AuthGate>
     <Routes>
       <Route path="/" element={<Shell />}>
         <Route index element={<Navigate to="/overview" replace />} />
@@ -18,6 +20,7 @@ export function App() {
         <Route path="report" element={<ReportPage />} />
       </Route>
     </Routes>
+    </AuthGate>
   )
 }
 
