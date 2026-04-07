@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Drawer } from '@/components/ui/Drawer'
 import { FormField } from '@/components/ui/FormField'
-import { useCreateBuc, useUpdateBuc } from '../hooks/useBuc'
+import { useCreateBuc, useUpdateBuc, useBucStats } from '../hooks/useBuc'
 import { notify } from '@/lib/toast'
 
 const inputCls = 'w-full h-9 px-3 rounded-xl text-[13px] bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] text-black/80 dark:text-white/80 focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30'
+const textareaCls = 'w-full px-3 py-2 rounded-xl text-[13px] bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] text-black/80 dark:text-white/80 focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 resize-none'
 
 interface BucDrawerProps {
   open: boolean
@@ -12,10 +13,20 @@ interface BucDrawerProps {
   editing?: any | null
 }
 
+function buildCopyMessage(item: any): string {
+  return [
+    `🔐 รหัส BUC ของคุณคือ: ${item.buc_code}`,
+    `📦 Package: ${item.package_name ?? 'Bank Uncensored Online'}`,
+    ``,
+    `กรุณากรอกฟอร์มลงทะเบียนเพื่อเข้าถึงคอร์สได้เลยครับ/ค่ะ`,
+  ].join('\n')
+}
+
 export function BucDrawer({ open, onClose, editing }: BucDrawerProps) {
   const isEdit = !!editing
   const create = useCreateBuc()
   const update = useUpdateBuc()
+  const { data: stats } = useBucStats()
 
   const [form, setForm] = useState({
     customer_name: '',
@@ -24,132 +35,253 @@ export function BucDrawer({ open, onClose, editing }: BucDrawerProps) {
     package_name: 'Bank Uncensored Online',
     status: 'pending',
     notes: '',
-    payment_ref: '',
-    payment_amount: '',
   })
+  const [error, setError] = useState('')
+  const [createdBuc, setCreatedBuc] = useState<any | null>(null)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    if (editing) {
-      setForm({
-        customer_name: editing.customer_name ?? '',
-        customer_phone: editing.customer_phone ?? '',
-        customer_email: editing.customer_email ?? '',
-        package_name: editing.package_name ?? 'Bank Uncensored Online',
-        status: editing.status ?? 'pending',
-        notes: editing.notes ?? '',
-        payment_ref: editing.payment_ref ?? '',
-        payment_amount: editing.payment_amount?.toString() ?? '',
-      })
-    } else {
-      setForm({
-        customer_name: '',
-        customer_phone: '',
-        customer_email: '',
-        package_name: 'Bank Uncensored Online',
-        status: 'pending',
-        notes: '',
-        payment_ref: '',
-        payment_amount: '',
-      })
+    if (open) {
+      if (editing) {
+        setForm({
+          customer_name: editing.customer_name ?? '',
+          customer_phone: editing.customer_phone ?? '',
+          customer_email: editing.customer_email ?? '',
+          package_name: editing.package_name ?? 'Bank Uncensored Online',
+          status: editing.status ?? 'pending',
+          notes: editing.notes ?? '',
+        })
+      } else {
+        setForm({
+          customer_name: '',
+          customer_phone: '',
+          customer_email: '',
+          package_name: 'Bank Uncensored Online',
+          status: 'pending',
+          notes: '',
+        })
+      }
+      setError('')
+      setCreatedBuc(null)
+      setCopied(false)
     }
   }, [editing, open])
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
   const loading = create.isPending || update.isPending
 
-  const handleSubmit = async () => {
-    const payload = {
-      ...form,
-      payment_amount: form.payment_amount ? Number(form.payment_amount) : undefined,
-    }
-    const promise = isEdit
-      ? update.mutateAsync({ id: editing.id, ...payload })
-      : create.mutateAsync(payload)
+  const nextBucPreview = stats?.last_buc_number != null
+    ? `BUC${String(stats.last_buc_number + 1).padStart(4, '0')}`
+    : null
 
-    notify.promise(promise, {
-      loading: isEdit ? 'กำลังบันทึก...' : 'กำลังออก BUC...',
-      success: isEdit ? 'บันทึกเรียบร้อย' : 'ออก BUC เรียบร้อย',
-      error: 'เกิดข้อผิดพลาด กรุณาลองใหม่',
-    })
+  const handleSubmit = async () => {
+    setError('')
+    if (!form.customer_name.trim()) {
+      setError('กรุณากรอกชื่อลูกค้า')
+      return
+    }
+
+    if (isEdit) {
+      try {
+        await update.mutateAsync({ id: editing.id, ...form })
+        notify.success('บันทึกเรียบร้อย')
+        onClose()
+      } catch {
+        notify.error('เกิดข้อผิดพลาด กรุณาลองใหม่')
+      }
+      return
+    }
+
     try {
-      await promise
-      onClose()
-    } catch {}
+      const result = await create.mutateAsync(form)
+      notify.success(`ออก BUC ${result.buc_code} สำเร็จ`)
+      setCreatedBuc(result)
+    } catch {
+      notify.error('เกิดข้อผิดพลาด กรุณาลองใหม่')
+    }
+  }
+
+  const handleCopy = () => {
+    if (!createdBuc) return
+    navigator.clipboard.writeText(buildCopyMessage(createdBuc))
+    setCopied(true)
+    notify.success('คัดลอกข้อความแล้ว')
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleDone = () => {
+    setCreatedBuc(null)
+    onClose()
   }
 
   return (
-    <Drawer open={open} onClose={onClose} title={isEdit ? `แก้ไข ${editing?.buc_code}` : 'ออก BUC ใหม่'}>
-      <div className="flex flex-col gap-4 py-2">
-        <div className="grid grid-cols-2 gap-4">
-          <FormField label="ชื่อลูกค้า">
-            <input className={inputCls} value={form.customer_name} onChange={e => set('customer_name', e.target.value)} placeholder="สมชาย ใจดี" />
+    <Drawer open={open} onClose={onClose} title={isEdit ? 'แก้ไขข้อมูล' : 'ออก BUC ใหม่'}>
+      {createdBuc ? (
+        /* ── Success state after create ── */
+        <div className="flex flex-col gap-5 py-2">
+          {/* Code badge */}
+          <div className="flex flex-col items-center gap-3 py-4">
+            <div className="w-14 h-14 rounded-full bg-[#34C759]/12 flex items-center justify-center">
+              <svg className="w-7 h-7 text-[#34C759]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div className="text-center">
+              <p className="text-[13px] text-black/40 dark:text-white/40">รหัส BUC ที่ออกสำเร็จ</p>
+              <p className="text-[28px] font-bold font-mono text-black dark:text-white tracking-wider mt-0.5">
+                {createdBuc.buc_code}
+              </p>
+              {createdBuc.customer_name && (
+                <p className="text-[13px] text-black/60 dark:text-white/60 mt-1">{createdBuc.customer_name}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Copy message box */}
+          <div>
+            <div className="text-[11px] text-black/40 dark:text-white/40 uppercase tracking-wide mb-2">ข้อความสำหรับส่งลูกค้า</div>
+            <div className="rounded-xl bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] p-3">
+              <pre className="text-[13px] text-black/80 dark:text-white/80 whitespace-pre-wrap font-sans leading-relaxed">
+                {buildCopyMessage(createdBuc)}
+              </pre>
+            </div>
+            <button
+              onClick={handleCopy}
+              className="mt-2 w-full h-9 rounded-xl text-[13px] font-medium transition-colors inline-flex items-center justify-center gap-2 border border-black/[0.08] dark:border-white/[0.08] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] text-black/70 dark:text-white/70"
+            >
+              {copied ? (
+                <>
+                  <svg className="w-4 h-4 text-[#34C759]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  คัดลอกแล้ว
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  คัดลอกข้อความ
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Next BUC preview */}
+          {nextBucPreview && (
+            <div className="px-3 py-2 rounded-xl bg-[#007AFF]/8 text-[12px] text-[#007AFF] text-center">
+              BUC ถัดไปจะเป็น <span className="font-mono font-semibold">{nextBucPreview}</span>
+            </div>
+          )}
+
+          <div className="pt-2 flex gap-2 border-t border-black/[0.06] dark:border-white/[0.06]">
+            <button
+              onClick={() => { setCreatedBuc(null); setForm({ customer_name: '', customer_phone: '', customer_email: '', package_name: 'Bank Uncensored Online', status: 'pending', notes: '' }); setError('') }}
+              className="flex-1 h-9 rounded-xl text-[13px] font-medium text-black/60 dark:text-white/60 bg-black/[0.04] dark:bg-white/[0.06] hover:bg-black/[0.07] transition-colors"
+            >
+              ออก BUC อีกใบ
+            </button>
+            <button
+              onClick={handleDone}
+              className="flex-1 h-9 rounded-xl text-[13px] font-medium text-white bg-[#007AFF] hover:bg-[#007AFF]/90 transition-colors"
+            >
+              เสร็จสิ้น
+            </button>
+          </div>
+        </div>
+      ) : (
+        /* ── Form state ── */
+        <div className="flex flex-col gap-4 py-2">
+          {/* Next BUC preview (create mode only) */}
+          {!isEdit && nextBucPreview && (
+            <div className="px-3 py-2 rounded-xl bg-[#007AFF]/8 text-[12px] text-[#007AFF]">
+              รหัสที่จะออก: <span className="font-mono font-semibold">{nextBucPreview}</span>
+            </div>
+          )}
+
+          <FormField label="ชื่อลูกค้า *">
+            <input
+              className={inputCls}
+              value={form.customer_name}
+              onChange={e => set('customer_name', e.target.value)}
+              placeholder="สมชาย ใจดี"
+            />
           </FormField>
+
           <FormField label="เบอร์โทร">
-            <input className={inputCls} value={form.customer_phone} onChange={e => set('customer_phone', e.target.value)} placeholder="08x-xxx-xxxx" />
+            <input
+              className={inputCls}
+              value={form.customer_phone}
+              onChange={e => set('customer_phone', e.target.value)}
+              placeholder="08x-xxx-xxxx"
+            />
           </FormField>
+
+          <FormField label="อีเมล">
+            <input
+              type="email"
+              className={inputCls}
+              value={form.customer_email}
+              onChange={e => set('customer_email', e.target.value)}
+              placeholder="email@example.com"
+            />
+          </FormField>
+
+          <FormField label="แพคเกจ">
+            <input
+              className={inputCls}
+              value={form.package_name}
+              onChange={e => set('package_name', e.target.value)}
+            />
+          </FormField>
+
+          {isEdit && (
+            <FormField label="สถานะ">
+              <select className={inputCls} value={form.status} onChange={e => set('status', e.target.value)}>
+                <option value="pending">รอกรอกฟอร์ม</option>
+                <option value="registered">กรอกฟอร์มแล้ว</option>
+                <option value="active">Active</option>
+                <option value="cancelled">ยกเลิก</option>
+              </select>
+            </FormField>
+          )}
+
+          <FormField label="หมายเหตุ">
+            <textarea
+              className={textareaCls}
+              rows={3}
+              value={form.notes}
+              onChange={e => set('notes', e.target.value)}
+            />
+          </FormField>
+
+          {error && <p className="text-[12px] text-[#FF3B30]">{error}</p>}
+
+          <div className="pt-4 flex justify-end gap-2 border-t border-black/[0.06] dark:border-white/[0.06]">
+            <button
+              onClick={onClose}
+              className="h-9 px-4 rounded-xl text-[13px] font-medium text-black/60 dark:text-white/60 bg-black/[0.04] dark:bg-white/[0.06] hover:bg-black/[0.07] transition-colors"
+            >
+              ยกเลิก
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="h-9 px-5 rounded-xl text-[13px] font-medium text-white bg-[#34C759] hover:bg-[#34C759]/90 disabled:opacity-50 transition-colors inline-flex items-center gap-1.5"
+            >
+              {loading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  กำลังบันทึก...
+                </>
+              ) : isEdit ? 'บันทึก' : 'ออก BUC'}
+            </button>
+          </div>
         </div>
-
-        <FormField label="อีเมล">
-          <input type="email" className={inputCls} value={form.customer_email} onChange={e => set('customer_email', e.target.value)} placeholder="email@example.com" />
-        </FormField>
-
-        <FormField label="Package">
-          <input className={inputCls} value={form.package_name} onChange={e => set('package_name', e.target.value)} />
-        </FormField>
-
-        {isEdit && (
-          <FormField label="สถานะ">
-            <select className={inputCls} value={form.status} onChange={e => set('status', e.target.value)}>
-              <option value="pending">รอกรอกฟอร์ม</option>
-              <option value="registered">กรอกฟอร์มแล้ว</option>
-              <option value="active">Active</option>
-              <option value="cancelled">ยกเลิก</option>
-            </select>
-          </FormField>
-        )}
-
-        <div className="grid grid-cols-2 gap-4">
-          <FormField label="Payment Ref">
-            <input className={inputCls} value={form.payment_ref} onChange={e => set('payment_ref', e.target.value)} placeholder="REF-..." />
-          </FormField>
-          <FormField label="ยอดชำระ (บาท)">
-            <input type="number" className={inputCls} value={form.payment_amount} onChange={e => set('payment_amount', e.target.value)} placeholder="0" />
-          </FormField>
-        </div>
-
-        <FormField label="หมายเหตุ">
-          <textarea
-            className="w-full px-3 py-2 rounded-xl text-[13px] bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] text-black/80 dark:text-white/80 focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 resize-none"
-            rows={3}
-            value={form.notes}
-            onChange={e => set('notes', e.target.value)}
-          />
-        </FormField>
-
-        <div className="pt-4 flex justify-end gap-2 border-t border-black/[0.06] dark:border-white/[0.06]">
-          <button
-            onClick={onClose}
-            className="h-9 px-4 rounded-xl text-[13px] font-medium text-black/60 dark:text-white/60 bg-black/[0.04] dark:bg-white/[0.06] hover:bg-black/[0.07] transition-colors"
-          >
-            ยกเลิก
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="h-9 px-5 rounded-xl text-[13px] font-medium text-white bg-[#34C759] hover:bg-[#34C759]/90 disabled:opacity-50 transition-colors inline-flex items-center gap-1.5"
-          >
-            {loading ? (
-              <>
-                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                </svg>
-                กำลังบันทึก...
-              </>
-            ) : isEdit ? 'บันทึก' : 'ออก BUC'}
-          </button>
-        </div>
-      </div>
+      )}
     </Drawer>
   )
 }
