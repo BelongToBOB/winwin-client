@@ -39,20 +39,6 @@ export function FilterBar({ filters, setFilter }: FilterBarProps) {
       </div>
 
       <select
-        value={filters.status || ''}
-        onChange={(e) => setFilter('status', e.target.value)}
-        className="h-9 px-3 text-[13px] rounded-xl bg-black/[0.06] dark:bg-white/[0.08] border-0 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all duration-200 cursor-pointer appearance-none pr-8 relative"
-        style={selectStyle}
-      >
-        <option value="">ทุกสถานะ</option>
-        <option value="pending">รอดำเนินการ</option>
-        <option value="confirmed">ยืนยันแล้ว</option>
-        <option value="attended">เข้าร่วมแล้ว</option>
-        <option value="no_show">ไม่มา</option>
-        <option value="cancelled">ยกเลิก</option>
-      </select>
-
-      <select
         value={filters.job || ''}
         onChange={(e) => setFilter('job', e.target.value)}
         className="h-9 px-3 text-[13px] rounded-xl bg-black/[0.06] dark:bg-white/[0.08] border-0 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all duration-200 cursor-pointer appearance-none pr-8 relative"

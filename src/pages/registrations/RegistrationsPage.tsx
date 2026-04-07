@@ -11,7 +11,7 @@ import { formatDate } from '@/lib/utils'
 import type { Registration } from '@/types/registration'
 
 export function RegistrationsPage() {
-  const { filters, setFilter } = useUrlFilters({ seminar_id: '', status: '', job: '', loan_range: '', q: '' })
+  const { filters, setFilter } = useUrlFilters({ seminar_id: '', job: '', loan_range: '', q: '' })
   const filtersRecord = filters as Record<string, string>
   const { data, isLoading } = useRegistrations(filters)
 
@@ -31,16 +31,11 @@ export function RegistrationsPage() {
     )
   }
 
-  const renderStatusBadge = (status: string) => {
-    switch (status) {
-      case 'pending':   return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-black/[0.06] text-black/50 dark:bg-white/[0.08] dark:text-white/50">รอดำเนินการ</span>
-      case 'confirmed': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#007AFF]/10 text-[#007AFF]">ยืนยันแล้ว</span>
-      case 'attended':  return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#34C759]/12 text-[#34C759]">เข้าร่วมแล้ว</span>
-      case 'no_show':   return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#FF3B30]/10 text-[#FF3B30]">ไม่มา</span>
-      case 'cancelled': return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-black/[0.06] text-black/30 dark:bg-white/[0.06] dark:text-white/30">ยกเลิก</span>
-      default: return null
-    }
-  }
+  const statusBadge = (
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#34C759]/12 text-[#34C759]">
+      ลงทะเบียนสำเร็จ
+    </span>
+  )
 
   return (
     <div className="flex flex-col h-full gap-4">
@@ -101,7 +96,7 @@ export function RegistrationsPage() {
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-black/[0.06] text-black/40 dark:bg-white/[0.06] dark:text-white/40">ไม่เคย</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-black/80 dark:text-white/80">{renderStatusBadge(reg.reg_status)}</td>
+                  <td className="px-4 py-3">{statusBadge}</td>
                   <td className="px-4 py-3 text-black/80 dark:text-white/80 tabular-nums hidden sm:table-cell">{formatDate(reg.registered_at)}</td>
                   <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
                     <button

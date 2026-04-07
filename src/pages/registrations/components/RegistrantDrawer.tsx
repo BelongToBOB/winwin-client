@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Drawer } from '@/components/ui/Drawer'
 import { FormField } from '@/components/ui/FormField'
 import {
-  useUpdateRegistrationStatus,
   useUpdateRegistrationProfile,
   useDeleteRegistration,
 } from '../hooks/useRegistrationMutations'
@@ -23,14 +22,11 @@ interface RegistrantDrawerProps {
 
 export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDrawerProps) {
   const [editing, setEditing] = useState(false)
-  const [confirmingDelete, setConfirmingDelete] = useState(false)
 
-  const updateStatus = useUpdateRegistrationStatus(filters)
   const updateProfile = useUpdateRegistrationProfile(filters)
   const deleteReg = useDeleteRegistration(filters)
 
   const [form, setForm] = useState({
-    reg_status: data?.reg_status ?? 'pending',
     loan_amount_range: data?.loan_amount_range ?? '',
     loan_before: data?.loan_before ?? false,
     credit_banks: data?.credit_banks ?? '',
@@ -44,7 +40,6 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
   useEffect(() => {
     if (data) {
       setForm({
-        reg_status: data.reg_status,
         loan_amount_range: data.loan_amount_range ?? '',
         loan_before: data.loan_before ?? false,
         credit_banks: data.credit_banks ?? '',
@@ -53,7 +48,6 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
         loan_problems: data.loan_problems ?? '',
       })
       setEditing(false)
-      setConfirmingDelete(false)
       setSaveError(null)
     }
   }, [data])
@@ -61,22 +55,19 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
   if (!data) return null
 
   const set = (k: string, v: string | boolean) => setForm(f => ({ ...f, [k]: v }))
-  const loading = updateStatus.isPending || updateProfile.isPending
+  const loading = updateProfile.isPending
 
   const handleSave = async () => {
     setSaveError(null)
-    const savePromise = (async () => {
-      await updateStatus.mutateAsync({ id: data.id, reg_status: form.reg_status })
-      await updateProfile.mutateAsync({
-        registrationId: data.id,
-        loan_amount_range: form.loan_amount_range || undefined,
-        loan_before: form.loan_before,
-        credit_banks: form.credit_banks || undefined,
-        channels: form.channels || undefined,
-        objective: form.objective || undefined,
-        loan_problems: form.loan_problems || undefined,
-      })
-    })()
+    const savePromise = updateProfile.mutateAsync({
+      registrationId: data.id,
+      loan_amount_range: form.loan_amount_range || undefined,
+      loan_before: form.loan_before,
+      credit_banks: form.credit_banks || undefined,
+      channels: form.channels || undefined,
+      objective: form.objective || undefined,
+      loan_problems: form.loan_problems || undefined,
+    })
     notify.promise(savePromise, {
       loading: 'กำลังบันทึก...',
       success: 'บันทึกข้อมูลเรียบร้อย',
@@ -98,19 +89,8 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
       { loading: 'กำลังลบ...', success: 'ลบผู้ลงทะเบียนเรียบร้อย', error: 'ไม่สามารถลบได้' },
     )
     deleteReg.mutateAsync(data.id)
-      .then(() => { setConfirmingDelete(false); onClose() })
+      .then(() => onClose())
       .catch(() => {})
-  }
-
-  const renderStatusBadge = (status: string) => {
-    switch (status) {
-      case 'pending':   return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-black/[0.06] text-black/50 dark:bg-white/[0.08] dark:text-white/50">รอดำเนินการ</span>
-      case 'confirmed': return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#007AFF]/10 text-[#007AFF]">ยืนยันแล้ว</span>
-      case 'attended':  return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#34C759]/12 text-[#34C759]">เข้าร่วมแล้ว</span>
-      case 'no_show':   return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#FF3B30]/10 text-[#FF3B30]">ไม่มา</span>
-      case 'cancelled': return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-black/[0.06] text-black/30 dark:bg-white/[0.06] dark:text-white/30">ยกเลิก</span>
-      default: return null
-    }
   }
 
   return (
@@ -127,7 +107,7 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
                 {data.first_name} {data.last_name} {data.nickname && `(${data.nickname})`}
               </h3>
               <div className="mt-1 flex items-center gap-2">
-                {renderStatusBadge(data.reg_status)}
+                <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#34C759]/12 text-[#34C759]">ลงทะเบียนสำเร็จ</span>
                 <span className="text-[11px] text-black/40 dark:text-white/40">{data.job_category}</span>
               </div>
             </div>
@@ -165,16 +145,6 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
         {/* Editable section */}
         {editing ? (
           <div className="flex flex-col gap-4">
-            <FormField label="สถานะ">
-              <select className={inputCls} value={form.reg_status} onChange={e => set('reg_status', e.target.value)}>
-                <option value="pending">รอดำเนินการ</option>
-                <option value="confirmed">ยืนยันแล้ว</option>
-                <option value="attended">เข้าร่วมแล้ว</option>
-                <option value="no_show">ไม่มา</option>
-                <option value="cancelled">ยกเลิก</option>
-              </select>
-            </FormField>
-
             <div className="grid grid-cols-2 gap-4">
               <FormField label="วงเงินกู้">
                 <select className={inputCls} value={form.loan_amount_range} onChange={e => set('loan_amount_range', e.target.value)}>
