@@ -7,6 +7,40 @@ import { notify } from '@/lib/toast'
 const inputCls = 'w-full h-9 px-3 rounded-xl text-[13px] bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] text-black/80 dark:text-white/80 focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30'
 const textareaCls = 'w-full px-3 py-2 rounded-xl text-[13px] bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] text-black/80 dark:text-white/80 focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 resize-none'
 
+const parseNotes = (notes: string) => {
+  try {
+    return JSON.parse(notes)
+  } catch {
+    return null
+  }
+}
+
+const formatThaiDate = (dateStr: string) => {
+  if (!dateStr) return '-'
+  return new Date(dateStr).toLocaleDateString('th-TH', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+const SKILL_LABELS: Record<string, string> = {
+  beginner: 'มือใหม่',
+  basic: 'พอมีพื้นฐาน',
+  intermediate: 'ระดับจัดการ',
+  advanced: 'ระดับเชี่ยวชาญ',
+}
+
+const GOAL_LABELS: Record<string, string> = {
+  scale_up: 'Scale Up',
+  fundraising: 'Fundraising / Loan',
+  profit: 'Profit Optimization',
+  risk: 'Risk Management',
+  legacy: 'Legacy / System',
+}
+
 interface BucDrawerProps {
   open: boolean
   onClose: () => void
@@ -199,6 +233,52 @@ export function BucDrawer({ open, onClose, editing }: BucDrawerProps) {
             </div>
           )}
 
+          {/* Edit mode — dates + parsed registration data */}
+          {isEdit && (
+            <>
+              {/* Dates */}
+              <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.06] px-3 py-2.5 flex flex-col gap-1.5">
+                <div className="flex justify-between text-[12px]">
+                  <span className="text-black/40 dark:text-white/40">วันที่ออก BUC</span>
+                  <span className="text-black/70 dark:text-white/70">{formatThaiDate(editing.issued_at)}</span>
+                </div>
+                {editing.registered_at && (
+                  <div className="flex justify-between text-[12px]">
+                    <span className="text-black/40 dark:text-white/40">วันที่ลงทะเบียน</span>
+                    <span className="text-[#34C759]">{formatThaiDate(editing.registered_at)}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Parsed notes from registration form */}
+              {editing.notes && (() => {
+                const n = parseNotes(editing.notes)
+                if (!n) return null
+                const infoRow = (label: string, value: string) => (
+                  <div key={label} className="flex justify-between gap-3 text-[12px]">
+                    <span className="text-black/40 dark:text-white/40 shrink-0">{label}</span>
+                    <span className="text-black/70 dark:text-white/70 text-right">{value}</span>
+                  </div>
+                )
+                const rows = [
+                  n.line_id ? infoRow('LINE ID', n.line_id) : null,
+                  n.source?.length > 0 ? infoRow('รู้จักจาก', n.source.join(', ')) : null,
+                  n.skill_level ? infoRow('ประสบการณ์', SKILL_LABELS[n.skill_level] ?? n.skill_level) : null,
+                  n.goal?.length > 0 ? infoRow('เป้าหมาย', n.goal.map((g: string) => GOAL_LABELS[g] ?? g).join(', ')) : null,
+                  n.interested_topics ? infoRow('หัวข้อที่สนใจ', n.interested_topics) : null,
+                  infoRow('ยินยอมรับข่าวสาร', n.consent_promo ? '✅ ยินยอม' : '❌ ไม่ยินยอม'),
+                ].filter(Boolean)
+                if (rows.length === 0) return null
+                return (
+                  <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.06] px-3 py-2.5">
+                    <div className="text-[10px] font-semibold uppercase tracking-wider text-black/30 dark:text-white/30 mb-2.5">ข้อมูลจากฟอร์มลงทะเบียน</div>
+                    <div className="flex flex-col gap-2">{rows}</div>
+                  </div>
+                )
+              })()}
+            </>
+          )}
+
           <FormField label="ชื่อลูกค้า *">
             <input
               className={inputCls}
@@ -246,14 +326,16 @@ export function BucDrawer({ open, onClose, editing }: BucDrawerProps) {
             </FormField>
           )}
 
-          <FormField label="หมายเหตุ">
-            <textarea
-              className={textareaCls}
-              rows={3}
-              value={form.notes}
-              onChange={e => set('notes', e.target.value)}
-            />
-          </FormField>
+          {!isEdit && (
+            <FormField label="หมายเหตุ">
+              <textarea
+                className={textareaCls}
+                rows={3}
+                value={form.notes}
+                onChange={e => set('notes', e.target.value)}
+              />
+            </FormField>
+          )}
 
           {error && <p className="text-[12px] text-[#FF3B30]">{error}</p>}
 
