@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Drawer } from '@/components/ui/Drawer'
 import { FormField } from '@/components/ui/FormField'
 import { useCreateRegistrant, useCreateRegistration } from '../hooks/useRegistrationMutations'
+import { notify } from '@/lib/toast'
 
 const inputCls = 'w-full h-9 px-3 rounded-xl text-[13px] bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] text-black/80 dark:text-white/80 focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30'
 
@@ -52,14 +53,17 @@ export function AddRegistrantDrawer({ open, onClose, seminarId, filters }: AddRe
       const registrant = Array.isArray(registrantRows) ? registrantRows[0] : registrantRows
       registrantId = registrant.id
     } catch {
+      notify.error('ไม่สามารถสร้างผู้ลงทะเบียนได้ กรุณาลองใหม่')
       setError('ไม่สามารถสร้างผู้ลงทะเบียนได้ กรุณาลองใหม่')
       return
     }
     try {
       await createRegistration.mutateAsync({ registrant_id: registrantId!, seminar_id: seminarId })
+      notify.success('เพิ่มผู้ลงทะเบียนเรียบร้อย')
       setForm({ first_name: '', last_name: '', nickname: '', email: '', phone: '', job_category: '' })
       onClose()
     } catch {
+      notify.error('สร้างผู้ลงทะเบียนสำเร็จ แต่ลงทะเบียน seminar ไม่สำเร็จ')
       setError('สร้างผู้ลงทะเบียนสำเร็จ แต่ไม่สามารถลงทะเบียนสัมมนาได้ กรุณาติดต่อ admin')
     }
   }
@@ -110,9 +114,17 @@ export function AddRegistrantDrawer({ open, onClose, seminarId, filters }: AddRe
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="h-9 px-5 rounded-xl text-[13px] font-medium text-white bg-[#34C759] hover:bg-[#34C759]/90 disabled:opacity-50 transition-colors"
+            className="h-9 px-5 rounded-xl text-[13px] font-medium text-white bg-[#34C759] hover:bg-[#34C759]/90 disabled:opacity-50 transition-colors inline-flex items-center gap-1.5"
           >
-            {loading ? 'กำลังบันทึก…' : 'เพิ่มผู้ลงทะเบียน'}
+            {loading ? (
+              <>
+                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+                กำลังบันทึก…
+              </>
+            ) : 'เพิ่มผู้ลงทะเบียน'}
           </button>
         </div>
       </div>

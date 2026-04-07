@@ -27,7 +27,7 @@ export function Drawer({ open, onClose, title, children }: DrawerProps) {
         onClick={onClose}
       />
       <div
-        className={`relative w-[480px] h-full bg-white dark:bg-[#1C1C1E] flex flex-col
+        className={`relative w-full sm:w-[480px] h-full bg-white dark:bg-[#1C1C1E] flex flex-col
           transition-transform duration-300 ease-in-out
           ${open ? 'translate-x-0' : 'translate-x-full'}`}
       >

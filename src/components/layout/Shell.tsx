@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Outlet, NavLink } from 'react-router'
 import { Topbar } from './Topbar'
 import { cn } from '@/lib/utils'
@@ -11,15 +12,31 @@ const navItems = [
 ]
 
 export function Shell() {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
   return (
     <div className="flex min-h-screen bg-[#F2F2F7] dark:bg-black font-sans text-black dark:text-white transition-colors duration-200">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 bottom-0 w-[240px] bg-white/72 dark:bg-[#1C1C1E]/72 backdrop-blur-2xl border-r border-black/[0.08] dark:border-white/[0.08] flex flex-col z-20">
+      <aside
+        className={cn(
+          'fixed left-0 top-0 bottom-0 w-[240px] bg-white/72 dark:bg-[#1C1C1E]/72 backdrop-blur-2xl border-r border-black/[0.08] dark:border-white/[0.08] flex flex-col z-40 transition-transform duration-300 ease-in-out',
+          'md:translate-x-0',
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        )}
+      >
         <div className="px-5 py-6">
           <h1 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">Win Win Wealth</h1>
           <p className="text-xs text-gray-400 mt-0.5">ระบบจัดการภายใน</p>
         </div>
-        
+
         <div className="px-4 mb-4">
           <div className="h-px w-full bg-black/[0.08] dark:bg-white/[0.08]" />
         </div>
@@ -29,6 +46,7 @@ export function Shell() {
             <NavLink
               key={item.to}
               to={item.to}
+              onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
                 cn(
                   'flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] transition-all duration-150',
@@ -56,9 +74,9 @@ export function Shell() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 ml-[240px] flex flex-col min-h-screen relative">
-        <Topbar />
-        <div className="flex-1 p-6">
+      <main className="flex-1 md:ml-[240px] flex flex-col min-h-screen relative">
+        <Topbar onMenuClick={() => setSidebarOpen(true)} />
+        <div className="flex-1 p-4 md:p-6">
           <Outlet />
         </div>
       </main>

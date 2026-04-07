@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Drawer } from '@/components/ui/Drawer'
 import { FormField } from '@/components/ui/FormField'
-import { DeleteConfirm } from '@/components/ui/DeleteConfirm'
 import {
   useUpdateRegistrationStatus,
   useUpdateRegistrationProfile,
   useDeleteRegistration,
 } from '../hooks/useRegistrationMutations'
+import { confirmDelete } from '@/lib/confirm'
+import { notify } from '@/lib/toast'
 import { getInitials } from '@/lib/utils'
 import type { Registration } from '@/types/registration'
 
@@ -22,7 +23,7 @@ interface RegistrantDrawerProps {
 
 export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDrawerProps) {
   const [editing, setEditing] = useState(false)
-  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
 
   const updateStatus = useUpdateRegistrationStatus(filters)
   const updateProfile = useUpdateRegistrationProfile(filters)
@@ -52,7 +53,7 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
         loan_problems: data.loan_problems ?? '',
       })
       setEditing(false)
-      setConfirmDelete(false)
+      setConfirmingDelete(false)
       setSaveError(null)
     }
   }, [data])
@@ -64,7 +65,7 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
 
   const handleSave = async () => {
     setSaveError(null)
-    try {
+    const savePromise = (async () => {
       await updateStatus.mutateAsync({ id: data.id, reg_status: form.reg_status })
       await updateProfile.mutateAsync({
         registrationId: data.id,
@@ -75,10 +76,30 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
         objective: form.objective || undefined,
         loan_problems: form.loan_problems || undefined,
       })
+    })()
+    notify.promise(savePromise, {
+      loading: 'กำลังบันทึก...',
+      success: 'บันทึกข้อมูลเรียบร้อย',
+      error: 'ไม่สามารถบันทึกได้ กรุณาลองใหม่',
+    })
+    try {
+      await savePromise
       setEditing(false)
     } catch {
       setSaveError('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่')
     }
+  }
+
+  const handleDelete = async () => {
+    const result = await confirmDelete(`${data.first_name} ${data.last_name}`)
+    if (!result.isConfirmed) return
+    notify.promise(
+      deleteReg.mutateAsync(data.id),
+      { loading: 'กำลังลบ...', success: 'ลบผู้ลงทะเบียนเรียบร้อย', error: 'ไม่สามารถลบได้' },
+    )
+    deleteReg.mutateAsync(data.id)
+      .then(() => { setConfirmingDelete(false); onClose() })
+      .catch(() => {})
   }
 
   const renderStatusBadge = (status: string) => {
@@ -190,22 +211,13 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
             </FormField>
 
             <div className="flex justify-between gap-2 pt-2 border-t border-black/[0.06] dark:border-white/[0.06]">
-              <div>
-                {confirmDelete ? (
-                  <DeleteConfirm
-                    onConfirm={() => deleteReg.mutate(data.id, { onSuccess: () => { setConfirmDelete(false); onClose() } })}
-                    onCancel={() => setConfirmDelete(false)}
-                    loading={deleteReg.isPending}
-                  />
-                ) : (
-                  <button
-                    onClick={() => setConfirmDelete(true)}
-                    className="h-8 px-3 rounded-xl text-[12px] font-medium text-[#FF3B30] bg-[#FF3B30]/10 hover:bg-[#FF3B30]/15 transition-colors"
-                  >
-                    ลบ
-                  </button>
-                )}
-              </div>
+              <button
+                onClick={handleDelete}
+                disabled={deleteReg.isPending}
+                className="h-8 px-3 rounded-xl text-[12px] font-medium text-[#FF3B30] bg-[#FF3B30]/10 hover:bg-[#FF3B30]/15 disabled:opacity-50 transition-colors"
+              >
+                ลบ
+              </button>
               <div className="flex gap-2">
                 <button
                   onClick={() => setEditing(false)}
@@ -216,9 +228,17 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
                 <button
                   onClick={handleSave}
                   disabled={loading}
-                  className="h-8 px-4 rounded-xl text-[12px] font-medium text-white bg-[#007AFF] hover:bg-[#007AFF]/90 disabled:opacity-50 transition-colors"
+                  className="h-8 px-4 rounded-xl text-[12px] font-medium text-white bg-[#007AFF] hover:bg-[#007AFF]/90 disabled:opacity-50 transition-colors inline-flex items-center gap-1.5"
                 >
-                  {loading ? 'กำลังบันทึก…' : 'บันทึก'}
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                      </svg>
+                      กำลังบันทึก...
+                    </>
+                  ) : 'บันทึก'}
                 </button>
               </div>
             </div>

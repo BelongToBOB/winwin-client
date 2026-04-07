@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "sweetalert2/dist/sweetalert2.min.css";
 
 @layer base {
   :root {
@@ -52,4 +53,14 @@
     color: var(--text-primary);
     background-color: var(--bg-base);
   }
+}
+
+.swal2-popup {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif !important;
+  border-radius: 16px !important;
+  font-size: 14px !important;
+}
+.swal2-title {
+  font-size: 18px !important;
+  font-weight: 600 !important;
 }

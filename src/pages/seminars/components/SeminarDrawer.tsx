@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Drawer } from '@/components/ui/Drawer'
 import { FormField } from '@/components/ui/FormField'
 import { useCreateSeminar, useUpdateSeminar } from '../hooks/useSeminars'
+import { notify } from '@/lib/toast'
 import type { CourseEvent } from '@/types/registration'
 
 const inputCls = 'w-full h-9 px-3 rounded-xl text-[13px] bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] text-black/80 dark:text-white/80 focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30'
@@ -52,7 +53,6 @@ export function SeminarDrawer({ open, onClose, event }: SeminarDrawerProps) {
   }, [event])
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
-
   const loading = create.isPending || update.isPending
 
   const handleSubmit = () => {
@@ -62,9 +62,21 @@ export function SeminarDrawer({ open, onClose, event }: SeminarDrawerProps) {
       price: form.price ? Number(form.price) : undefined,
     }
     if (isEdit) {
-      update.mutate({ id: event.id, ...payload }, { onSuccess: onClose })
+      notify.promise(
+        update.mutateAsync({ id: event.id, ...payload }),
+        { loading: 'กำลังบันทึก...', success: 'บันทึกการเปลี่ยนแปลงเรียบร้อย', error: 'ไม่สามารถบันทึกได้' },
+      )
+      update.mutateAsync({ id: event.id, ...payload })
+        .then(onClose)
+        .catch(() => {})
     } else {
-      create.mutate(payload, { onSuccess: onClose })
+      notify.promise(
+        create.mutateAsync(payload),
+        { loading: 'กำลังเพิ่มสัมมนา...', success: 'เพิ่มสัมมนาเรียบร้อย', error: 'ไม่สามารถเพิ่มสัมมนาได้' },
+      )
+      create.mutateAsync(payload)
+        .then(onClose)
+        .catch(() => {})
     }
   }
 
@@ -168,9 +180,17 @@ export function SeminarDrawer({ open, onClose, event }: SeminarDrawerProps) {
           <button
             onClick={handleSubmit}
             disabled={loading || !form.seminar_id || !form.course_name}
-            className="h-9 px-5 rounded-xl text-[13px] font-medium text-white bg-[#007AFF] hover:bg-[#007AFF]/90 disabled:opacity-50 transition-colors"
+            className="h-9 px-5 rounded-xl text-[13px] font-medium text-white bg-[#007AFF] hover:bg-[#007AFF]/90 disabled:opacity-50 transition-colors inline-flex items-center gap-2"
           >
-            {loading ? 'กำลังบันทึก…' : 'บันทึก'}
+            {loading ? (
+              <>
+                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+                กำลังบันทึก...
+              </>
+            ) : 'บันทึก'}
           </button>
         </div>
       </div>

@@ -4,8 +4,9 @@ import { useRegistrations } from './hooks/useRegistrations'
 import { FilterBar } from './components/FilterBar'
 import { RegistrantDrawer } from './components/RegistrantDrawer'
 import { AddRegistrantDrawer } from './components/AddRegistrantDrawer'
-import { DeleteConfirm } from '@/components/ui/DeleteConfirm'
 import { useDeleteRegistration } from './hooks/useRegistrationMutations'
+import { confirmDelete } from '@/lib/confirm'
+import { notify } from '@/lib/toast'
 import { formatDate } from '@/lib/utils'
 import type { Registration } from '@/types/registration'
 
@@ -16,10 +17,19 @@ export function RegistrationsPage() {
 
   const [selectedReg, setSelectedReg] = useState<Registration | null>(null)
   const [addOpen, setAddOpen] = useState(false)
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const deleteMutation = useDeleteRegistration(filtersRecord)
 
   const isDrawerOpen = !!selectedReg
+
+  const handleDelete = async (reg: Registration, e: React.MouseEvent) => {
+    e.stopPropagation()
+    const result = await confirmDelete(`${reg.first_name} ${reg.last_name}`)
+    if (!result.isConfirmed) return
+    notify.promise(
+      deleteMutation.mutateAsync(reg.id),
+      { loading: 'กำลังลบ...', success: 'ลบผู้ลงทะเบียนเรียบร้อย', error: 'ไม่สามารถลบได้' },
+    )
+  }
 
   const renderStatusBadge = (status: string) => {
     switch (status) {
@@ -54,13 +64,13 @@ export function RegistrationsPage() {
             <thead>
               <tr className="border-b border-black/[0.06] dark:border-white/[0.06]">
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ชื่อ–นามสกุล</th>
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ชื่อเล่น</th>
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">อาชีพ</th>
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ช่องทาง</th>
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">วงเงินกู้</th>
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">เคยกู้</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden sm:table-cell">ชื่อเล่น</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden md:table-cell">อาชีพ</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden lg:table-cell">ช่องทาง</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden lg:table-cell">วงเงินกู้</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden md:table-cell">เคยกู้</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">สถานะ</th>
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">วันลงทะเบียน</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden sm:table-cell">วันลงทะเบียน</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40"></th>
               </tr>
             </thead>
@@ -80,11 +90,11 @@ export function RegistrationsPage() {
                   className="hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors border-b border-black/[0.06] dark:border-white/[0.06] last:border-0 cursor-pointer"
                 >
                   <td className="px-4 py-3 text-black/80 dark:text-white/80 font-medium">{reg.first_name} {reg.last_name}</td>
-                  <td className="px-4 py-3 text-black/80 dark:text-white/80">{reg.nickname || '-'}</td>
-                  <td className="px-4 py-3 text-black/80 dark:text-white/80">{reg.job_category || '-'}</td>
-                  <td className="px-4 py-3 text-black/80 dark:text-white/80">{reg.channels || '-'}</td>
-                  <td className="px-4 py-3 text-black/80 dark:text-white/80">{reg.loan_amount_range || '-'}</td>
-                  <td className="px-4 py-3 text-black/80 dark:text-white/80">
+                  <td className="px-4 py-3 text-black/80 dark:text-white/80 hidden sm:table-cell">{reg.nickname || '-'}</td>
+                  <td className="px-4 py-3 text-black/80 dark:text-white/80 hidden md:table-cell">{reg.job_category || '-'}</td>
+                  <td className="px-4 py-3 text-black/80 dark:text-white/80 hidden lg:table-cell">{reg.channels || '-'}</td>
+                  <td className="px-4 py-3 text-black/80 dark:text-white/80 hidden lg:table-cell">{reg.loan_amount_range || '-'}</td>
+                  <td className="px-4 py-3 text-black/80 dark:text-white/80 hidden md:table-cell">
                     {reg.loan_before ? (
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-[#FF9500]/12 text-[#FF9500]">เคย</span>
                     ) : (
@@ -92,22 +102,15 @@ export function RegistrationsPage() {
                     )}
                   </td>
                   <td className="px-4 py-3 text-black/80 dark:text-white/80">{renderStatusBadge(reg.reg_status)}</td>
-                  <td className="px-4 py-3 text-black/80 dark:text-white/80 tabular-nums">{formatDate(reg.registered_at)}</td>
+                  <td className="px-4 py-3 text-black/80 dark:text-white/80 tabular-nums hidden sm:table-cell">{formatDate(reg.registered_at)}</td>
                   <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
-                    {confirmDelete === reg.id ? (
-                      <DeleteConfirm
-                        onConfirm={() => deleteMutation.mutate(reg.id, { onSuccess: () => setConfirmDelete(null) })}
-                        onCancel={() => setConfirmDelete(null)}
-                        loading={deleteMutation.isPending}
-                      />
-                    ) : (
-                      <button
-                        onClick={() => setConfirmDelete(reg.id)}
-                        className="h-6 px-2 rounded-lg text-[11px] font-medium text-[#FF3B30] bg-[#FF3B30]/10 hover:bg-[#FF3B30]/15 transition-colors"
-                      >
-                        ลบ
-                      </button>
-                    )}
+                    <button
+                      onClick={(e) => handleDelete(reg, e)}
+                      disabled={deleteMutation.isPending}
+                      className="h-6 px-2 rounded-lg text-[11px] font-medium text-[#FF3B30] bg-[#FF3B30]/10 hover:bg-[#FF3B30]/15 disabled:opacity-50 transition-colors"
+                    >
+                      ลบ
+                    </button>
                   </td>
                 </tr>
               ))}

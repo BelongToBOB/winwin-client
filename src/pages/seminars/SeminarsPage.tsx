@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useSeminars, useDeleteSeminar } from './hooks/useSeminars'
 import { SeminarDrawer } from './components/SeminarDrawer'
-import { DeleteConfirm } from '@/components/ui/DeleteConfirm'
+import { confirmDelete } from '@/lib/confirm'
+import { notify } from '@/lib/toast'
 import { formatDate } from '@/lib/utils'
 import type { CourseEvent } from '@/types/registration'
 
@@ -21,10 +22,18 @@ export function SeminarsPage() {
 
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editing, setEditing] = useState<CourseEvent | null>(null)
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
 
   const openAdd = () => { setEditing(null); setDrawerOpen(true) }
   const openEdit = (ev: CourseEvent) => { setEditing(ev); setDrawerOpen(true) }
+
+  const handleDelete = async (ev: CourseEvent) => {
+    const result = await confirmDelete(ev.course_name)
+    if (!result.isConfirmed) return
+    notify.promise(
+      deleteMutation.mutateAsync(ev.id),
+      { loading: 'กำลังลบ...', success: 'ลบสัมมนาเรียบร้อย', error: 'ไม่สามารถลบได้' },
+    )
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -49,8 +58,8 @@ export function SeminarsPage() {
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">รหัสสัมมนา</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ชื่อคอร์ส</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">วันที่</th>
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">สถานที่</th>
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ที่นั่ง</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden md:table-cell">สถานที่</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden md:table-cell">ที่นั่ง</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ลงทะเบียน</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">สถานะ</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40"></th>
@@ -70,33 +79,26 @@ export function SeminarsPage() {
                       <td className="px-4 py-3 font-mono text-[12px] text-black/60 dark:text-white/60">{ev.seminar_id}</td>
                       <td className="px-4 py-3 text-black/80 dark:text-white/80 font-medium">{ev.course_name}</td>
                       <td className="px-4 py-3 text-black/60 dark:text-white/60 tabular-nums">{formatDate(ev.event_date) || '-'}</td>
-                      <td className="px-4 py-3 text-black/60 dark:text-white/60">{ev.venue || '-'}</td>
-                      <td className="px-4 py-3 text-black/60 dark:text-white/60 tabular-nums">{ev.max_seats ?? '-'}</td>
+                      <td className="px-4 py-3 text-black/60 dark:text-white/60 hidden md:table-cell">{ev.venue || '-'}</td>
+                      <td className="px-4 py-3 text-black/60 dark:text-white/60 tabular-nums hidden md:table-cell">{ev.max_seats ?? '-'}</td>
                       <td className="px-4 py-3 text-black/60 dark:text-white/60 tabular-nums">{ev.total_registrations}</td>
                       <td className="px-4 py-3">{statusBadge(ev.status)}</td>
                       <td className="px-4 py-3">
-                        {confirmDelete === ev.id ? (
-                          <DeleteConfirm
-                            onConfirm={() => deleteMutation.mutate(ev.id, { onSuccess: () => setConfirmDelete(null) })}
-                            onCancel={() => setConfirmDelete(null)}
-                            loading={deleteMutation.isPending}
-                          />
-                        ) : (
-                          <span className="inline-flex gap-1.5">
-                            <button
-                              onClick={() => openEdit(ev)}
-                              className="h-6 px-2.5 rounded-lg text-[11px] font-medium text-[#007AFF] bg-[#007AFF]/10 hover:bg-[#007AFF]/15 transition-colors"
-                            >
-                              แก้ไข
-                            </button>
-                            <button
-                              onClick={() => setConfirmDelete(ev.id)}
-                              className="h-6 px-2.5 rounded-lg text-[11px] font-medium text-[#FF3B30] bg-[#FF3B30]/10 hover:bg-[#FF3B30]/15 transition-colors"
-                            >
-                              ลบ
-                            </button>
-                          </span>
-                        )}
+                        <span className="inline-flex gap-1.5">
+                          <button
+                            onClick={() => openEdit(ev)}
+                            className="h-6 px-2.5 rounded-lg text-[11px] font-medium text-[#007AFF] bg-[#007AFF]/10 hover:bg-[#007AFF]/15 transition-colors"
+                          >
+                            แก้ไข
+                          </button>
+                          <button
+                            onClick={() => handleDelete(ev)}
+                            disabled={deleteMutation.isPending}
+                            className="h-6 px-2.5 rounded-lg text-[11px] font-medium text-[#FF3B30] bg-[#FF3B30]/10 hover:bg-[#FF3B30]/15 disabled:opacity-50 transition-colors"
+                          >
+                            ลบ
+                          </button>
+                        </span>
                       </td>
                     </tr>
                   ))}
