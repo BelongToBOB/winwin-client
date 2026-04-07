@@ -1,5 +1,6 @@
 import { useSeminars } from '@/pages/seminars/hooks/useSeminars'
 import { exportReport } from '@/pages/report/hooks/useReport'
+import { api } from '@/lib/api'
 import type { ReportType } from '@/types/report'
 
 interface ReportBuilderProps {
@@ -17,9 +18,101 @@ const selectStyle = {
 export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
   const { data: seminars = [] } = useSeminars()
 
-  const handleExport = () => {
-    if (filters.seminar_id && filters.report_type) {
-      exportReport(filters.seminar_id, filters.report_type as ReportType, 'csv')
+  const canExport = !!(filters.seminar_id && filters.report_type)
+
+  const handleExportCsv = () => {
+    if (canExport) exportReport(filters.seminar_id!, filters.report_type as ReportType, 'csv')
+  }
+
+  const handleExportPdf = async () => {
+    if (!canExport) return
+    const seminar_id = filters.seminar_id!
+    const report_type = filters.report_type as ReportType
+    try {
+      const res = await api.get('/report/preview', { params: { seminar_id, type: report_type } })
+      const rows = res.data
+      const seminarName = seminars.find((s) => s.seminar_id === seminar_id)?.course_name || ''
+      const printDate = new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })
+
+      let title = ''
+      let thead = ''
+      let tbody = ''
+
+      if (report_type === 'registration_summary') {
+        title = `สรุปการลงทะเบียน — ${seminar_id} ${seminarName}`
+        thead = `<tr>
+          <th>ลำดับ</th><th>ชื่อ</th><th>นามสกุล</th><th>ชื่อเล่น</th>
+          <th>อีเมล</th><th>เบอร์โทร</th><th>อาชีพ</th>
+          <th>ช่องทาง</th><th>วงเงินกู้</th><th>สถานะ</th>
+        </tr>`
+        tbody = rows.map((r: any, i: number) => `<tr>
+          <td>${i + 1}</td>
+          <td>${r.first_name || '-'}</td>
+          <td>${r.last_name || '-'}</td>
+          <td>${r.nickname || '-'}</td>
+          <td>${r.email || '-'}</td>
+          <td>${r.phone || '-'}</td>
+          <td>${r.job_category || '-'}</td>
+          <td>${r.channels || '-'}</td>
+          <td>${r.loan_amount_range || '-'}</td>
+          <td>${r.reg_status || '-'}</td>
+        </tr>`).join('')
+      } else if (report_type === 'attendance_sheet') {
+        title = `ใบเซ็นชื่อเข้าร่วม — ${seminar_id} ${seminarName}`
+        thead = `<tr>
+          <th style="width:40px">ลำดับ</th>
+          <th>ชื่อ</th><th>นามสกุล</th><th>ชื่อเล่น</th>
+          <th>เบอร์โทร</th>
+          <th style="width:180px">ลายเซ็น</th>
+        </tr>`
+        tbody = rows.map((r: any, i: number) => `<tr>
+          <td style="text-align:center">${i + 1}</td>
+          <td>${r.first_name || '-'}</td>
+          <td>${r.last_name || '-'}</td>
+          <td>${r.nickname || '-'}</td>
+          <td>${r.phone || '-'}</td>
+          <td style="height:44px"></td>
+        </tr>`).join('')
+      }
+
+      const html = `<!DOCTYPE html><html lang="th"><head>
+        <meta charset="UTF-8">
+        <title>${title}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+        <style>
+          * { margin:0; padding:0; box-sizing:border-box; }
+          body { font-family:'Sarabun',sans-serif; font-size:13px; color:#000; padding:15mm; }
+          .header { text-align:center; margin-bottom:14px; }
+          .header h1 { font-size:18px; font-weight:700; }
+          .header p { font-size:13px; color:#444; margin-top:2px; }
+          .meta { display:flex; justify-content:space-between; font-size:12px; color:#666; margin-bottom:10px; }
+          table { width:100%; border-collapse:collapse; font-size:12px; }
+          th { background:#1e293b; color:#fff; padding:8px 6px; text-align:left; font-weight:600; border:1px solid #333; }
+          td { padding:6px; border:1px solid #bbb; vertical-align:middle; }
+          tr:nth-child(even) td { background:#f8f8f8; }
+          .footer { margin-top:12px; font-size:11px; color:#999; text-align:right; }
+          @media print { @page { size:A4 landscape; margin:10mm; } }
+        </style>
+      </head><body>
+        <div class="header">
+          <h1>Win Win Wealth</h1>
+          <p>${title}</p>
+        </div>
+        <div class="meta">
+          <span>จำนวนทั้งหมด: ${rows.length} คน</span>
+          <span>วันที่พิมพ์: ${printDate}</span>
+        </div>
+        <table><thead>${thead}</thead><tbody>${tbody}</tbody></table>
+        <div class="footer">Win Win Wealth Creation Co., Ltd. — ระบบจัดการภายใน</div>
+        <script>window.onload = function(){ window.print(); }</script>
+      </body></html>`
+
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
+      const url = URL.createObjectURL(blob)
+      const win = window.open(url, '_blank')
+      if (win) win.onafterprint = () => URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('PDF export error', err)
     }
   }
 
@@ -57,20 +150,25 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
           >
             <option value="">เลือกประเภทรายงาน...</option>
             <option value="registration_summary">สรุปการลงทะเบียน</option>
-            <option value="loan_profile">โปรไฟล์สินเชื่อ</option>
-            <option value="attendance">การเข้าร่วม</option>
-            <option value="crm_pipeline">ไปป์ไลน์ CRM</option>
+            <option value="attendance_sheet">ใบเซ็นชื่อเข้าร่วม</option>
           </select>
         </div>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-4 flex gap-2">
         <button
-          onClick={handleExport}
-          disabled={!filters.seminar_id || !filters.report_type}
+          onClick={handleExportCsv}
+          disabled={!canExport}
           className="h-9 px-4 rounded-xl text-[13px] font-medium text-[#007AFF] bg-[#007AFF]/10 hover:bg-[#007AFF]/15 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none transition-all duration-150"
         >
           ส่งออก CSV
+        </button>
+        <button
+          onClick={handleExportPdf}
+          disabled={!canExport}
+          className="h-9 px-4 rounded-xl text-[13px] font-medium text-white bg-[#FF3B30] hover:bg-[#FF3B30]/90 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none transition-all duration-150"
+        >
+          ส่งออก PDF
         </button>
       </div>
     </div>

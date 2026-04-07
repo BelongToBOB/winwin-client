@@ -3,11 +3,13 @@ import { useReportPreview } from './hooks/useReport'
 import { ReportBuilder } from './components/ReportBuilder'
 import type { ReportType, ReportRow } from '@/types/report'
 
-interface ColDef { key: string; label: string }
+interface ColDef { key: string; label: string; signature?: boolean }
 
 const COLUMNS: Record<string, ColDef[]> = {
   registration_summary: [
-    { key: 'full_name',        label: 'ชื่อ-นามสกุล' },
+    { key: '_index',           label: 'ลำดับ' },
+    { key: 'first_name',       label: 'ชื่อ' },
+    { key: 'last_name',        label: 'นามสกุล' },
     { key: 'nickname',         label: 'ชื่อเล่น' },
     { key: 'email',            label: 'อีเมล' },
     { key: 'phone',            label: 'เบอร์โทร' },
@@ -15,34 +17,20 @@ const COLUMNS: Record<string, ColDef[]> = {
     { key: 'channels',         label: 'ช่องทาง' },
     { key: 'loan_amount_range',label: 'วงเงินกู้' },
     { key: 'reg_status',       label: 'สถานะ' },
-    { key: 'registered_at',    label: 'วันที่ลงทะเบียน' },
   ],
-  loan_profile: [
-    { key: 'full_name',        label: 'ชื่อ-นามสกุล' },
-    { key: 'loan_before',      label: 'เคยกู้มาก่อน' },
-    { key: 'credit_banks',     label: 'ธนาคาร' },
-    { key: 'loan_amount_range',label: 'วงเงินกู้' },
-    { key: 'objective',        label: 'วัตถุประสงค์' },
-    { key: 'loan_problems',    label: 'ปัญหาการกู้' },
-  ],
-  attendance: [
-    { key: 'full_name',     label: 'ชื่อ-นามสกุล' },
-    { key: 'reg_status',    label: 'สถานะ' },
-    { key: 'registered_at', label: 'วันที่ลงทะเบียน' },
-  ],
-  crm_pipeline: [
-    { key: 'full_name',     label: 'ชื่อ-นามสกุล' },
-    { key: 'crm_stage',     label: 'สถานะ CRM' },
-    { key: 'assigned_to',   label: 'ผู้รับผิดชอบ' },
-    { key: 'next_followup', label: 'ติดตามครั้งถัดไป' },
+  attendance_sheet: [
+    { key: '_index',    label: 'ลำดับ' },
+    { key: 'first_name',label: 'ชื่อ' },
+    { key: 'last_name', label: 'นามสกุล' },
+    { key: 'nickname',  label: 'ชื่อเล่น' },
+    { key: 'phone',     label: 'เบอร์โทร' },
+    { key: 'signature', label: 'ลายเซ็น', signature: true },
   ],
 }
 
 const REPORT_LABELS: Record<string, string> = {
   registration_summary: 'สรุปการลงทะเบียน',
-  loan_profile:         'โปรไฟล์สินเชื่อ',
-  attendance:           'การเข้าร่วม',
-  crm_pipeline:         'ไปป์ไลน์ CRM',
+  attendance_sheet:     'ใบเซ็นชื่อเข้าร่วม',
 }
 
 export function ReportPage() {
@@ -58,7 +46,10 @@ export function ReportPage() {
 
   return (
     <div className="flex flex-col h-full gap-5">
-      <ReportBuilder filters={{ ...filters, report_type: filters.report_type as ReportType | '' }} setFilter={setFilter} />
+      <ReportBuilder
+        filters={{ ...filters, report_type: filters.report_type as ReportType | '' }}
+        setFilter={setFilter}
+      />
 
       <div className="bg-white/80 dark:bg-[#1C1C1E]/80 backdrop-blur-xl rounded-2xl border border-black/[0.08] dark:border-white/[0.08] overflow-hidden flex-1">
         {(!filters.seminar_id || !filters.report_type) ? (
@@ -102,11 +93,19 @@ export function ReportPage() {
                     ))
                   ) : (data || []).map((row: ReportRow, i) => (
                     <tr key={i} className="border-b border-black/[0.06] dark:border-white/[0.06] last:border-0 hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors">
-                      {cols.map((col) => (
-                        <td key={col.key} className="px-4 py-3 text-black/80 dark:text-white/80 max-w-[220px] truncate">
-                          {row[col.key] ?? '-'}
-                        </td>
-                      ))}
+                      {cols.map((col) => {
+                        if (col.signature) {
+                          return <td key={col.key} className="px-4 py-3 h-10 bg-black/[0.02] dark:bg-white/[0.02]" />
+                        }
+                        if (col.key === '_index') {
+                          return <td key={col.key} className="px-4 py-3 text-black/40 dark:text-white/40 tabular-nums">{i + 1}</td>
+                        }
+                        return (
+                          <td key={col.key} className="px-4 py-3 text-black/80 dark:text-white/80 max-w-[180px] truncate">
+                            {row[col.key] || '-'}
+                          </td>
+                        )
+                      })}
                     </tr>
                   ))}
                   {!isLoading && data?.length === 0 && (

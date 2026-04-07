@@ -1,7 +1,5 @@
 export type ReportType =
   | 'registration_summary'
-  | 'loan_profile'
-  | 'crm_pipeline'
-  | 'attendance'
+  | 'attendance_sheet'
 
 export type ReportRow = Record<string, string | null | undefined>
