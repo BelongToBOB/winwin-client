@@ -6,6 +6,7 @@ import { qk } from '@/lib/queryKeys'
 
 interface CourseEvent {
   seminar_id: string
+  course_name: string
 }
 
 const titleMap: Record<string, { title: string; subtitle: string }> = {
@@ -53,7 +54,7 @@ export function Topbar() {
           <option value="">ทุก seminar</option>
           {seminars.map((s) => (
             <option key={s.seminar_id} value={s.seminar_id}>
-              {s.seminar_id}
+              {s.seminar_id} — {s.course_name}
             </option>
           ))}
         </select>

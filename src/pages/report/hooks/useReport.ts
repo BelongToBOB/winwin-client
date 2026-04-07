@@ -18,7 +18,8 @@ export function useReportPreview(seminarId: string, type: ReportType | '') {
   })
 }
 
-export function exportReport(seminarId: string, type: ReportType, format: 'csv' | 'pdf') {
+export function exportReport(seminarId: string, type: ReportType, format: 'csv') {
   if (!seminarId || !type) return
-  window.open(`/api/report/export?seminar_id=${seminarId}&type=${type}&format=${format}`, '_blank')
+  const base = (import.meta.env.VITE_API_URL as string | undefined) ?? '/api'
+  window.open(`${base}/report/export?seminar_id=${seminarId}&type=${type}&format=${format}`, '_blank')
 }

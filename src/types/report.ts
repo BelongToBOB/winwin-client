@@ -4,7 +4,4 @@ export type ReportType =
   | 'crm_pipeline'
   | 'attendance'
 
-export interface ReportRow {
-  metric: string
-  value: string
-}
+export type ReportRow = Record<string, string | null | undefined>

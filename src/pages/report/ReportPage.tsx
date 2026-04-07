@@ -1,24 +1,60 @@
 import { useUrlFilters } from '@/hooks/useUrlFilters'
 import { useReportPreview } from './hooks/useReport'
 import { ReportBuilder } from './components/ReportBuilder'
-import type { ReportType } from '@/types/report'
+import type { ReportType, ReportRow } from '@/types/report'
+
+interface ColDef { key: string; label: string }
+
+const COLUMNS: Record<string, ColDef[]> = {
+  registration_summary: [
+    { key: 'full_name',        label: 'ชื่อ-นามสกุล' },
+    { key: 'nickname',         label: 'ชื่อเล่น' },
+    { key: 'email',            label: 'อีเมล' },
+    { key: 'phone',            label: 'เบอร์โทร' },
+    { key: 'job_category',     label: 'อาชีพ' },
+    { key: 'channels',         label: 'ช่องทาง' },
+    { key: 'loan_amount_range',label: 'วงเงินกู้' },
+    { key: 'reg_status',       label: 'สถานะ' },
+    { key: 'registered_at',    label: 'วันที่ลงทะเบียน' },
+  ],
+  loan_profile: [
+    { key: 'full_name',        label: 'ชื่อ-นามสกุล' },
+    { key: 'loan_before',      label: 'เคยกู้มาก่อน' },
+    { key: 'credit_banks',     label: 'ธนาคาร' },
+    { key: 'loan_amount_range',label: 'วงเงินกู้' },
+    { key: 'objective',        label: 'วัตถุประสงค์' },
+    { key: 'loan_problems',    label: 'ปัญหาการกู้' },
+  ],
+  attendance: [
+    { key: 'full_name',     label: 'ชื่อ-นามสกุล' },
+    { key: 'reg_status',    label: 'สถานะ' },
+    { key: 'registered_at', label: 'วันที่ลงทะเบียน' },
+  ],
+  crm_pipeline: [
+    { key: 'full_name',     label: 'ชื่อ-นามสกุล' },
+    { key: 'crm_stage',     label: 'สถานะ CRM' },
+    { key: 'assigned_to',   label: 'ผู้รับผิดชอบ' },
+    { key: 'next_followup', label: 'ติดตามครั้งถัดไป' },
+  ],
+}
+
+const REPORT_LABELS: Record<string, string> = {
+  registration_summary: 'สรุปการลงทะเบียน',
+  loan_profile:         'โปรไฟล์สินเชื่อ',
+  attendance:           'การเข้าร่วม',
+  crm_pipeline:         'ไปป์ไลน์ CRM',
+}
 
 export function ReportPage() {
   const { filters, setFilter } = useUrlFilters({ seminar_id: '', report_type: '' })
-  
+
   const { data, isLoading } = useReportPreview(
-    filters.seminar_id || '', 
+    filters.seminar_id || '',
     (filters.report_type as ReportType) || ''
   )
 
-  const reportTypeLabelMap: Record<string, string> = {
-    'registration_summary': 'สรุปการลงทะเบียน',
-    'loan_profile': 'สรุปข้อมูลสินเชื่อ',
-    'crm_pipeline': 'สรุป CRM pipeline',
-    'attendance': 'สรุปการเข้าร่วม'
-  }
-
-  const selectedLabel = filters.report_type ? reportTypeLabelMap[filters.report_type] : ''
+  const cols: ColDef[] = COLUMNS[filters.report_type] ?? []
+  const selectedLabel = REPORT_LABELS[filters.report_type] ?? ''
 
   return (
     <div className="flex flex-col h-full gap-5">
@@ -38,36 +74,47 @@ export function ReportPage() {
           <>
             <div className="px-5 py-3.5 border-b border-black/[0.06] dark:border-white/[0.06] flex items-center justify-between">
               <h3 className="text-[17px] font-semibold text-black dark:text-white tracking-tight">
-                Preview — {filters.seminar_id} · {selectedLabel}
+                {filters.seminar_id} · {selectedLabel}
               </h3>
+              {!isLoading && data && (
+                <span className="text-[12px] text-black/40 dark:text-white/40">{data.length} รายการ</span>
+              )}
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-[13px]">
                 <thead>
                   <tr className="border-b border-black/[0.06] dark:border-white/[0.06]">
-                    <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 w-1/2">ตัวชี้วัด</th>
-                    <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 w-1/2">ค่า</th>
+                    {cols.map((col) => (
+                      <th key={col.key} className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 whitespace-nowrap">
+                        {col.label}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
                   {isLoading ? (
                     Array.from({ length: 6 }).map((_, i) => (
-                      <tr key={i} className="border-b border-black/[0.06] dark:border-white/[0.06] last:border-0 odd:bg-transparent even:bg-black/[0.02] dark:even:bg-white/[0.03]">
-                        <td colSpan={2} className="px-4 py-3">
-                          <div className="animate-pulse bg-black/[0.06] dark:bg-white/[0.08] h-5 w-full rounded"></div>
+                      <tr key={i} className="border-b border-black/[0.06] dark:border-white/[0.06] last:border-0">
+                        <td colSpan={cols.length || 1} className="px-4 py-3">
+                          <div className="animate-pulse bg-black/[0.06] dark:bg-white/[0.08] h-5 w-full rounded" />
                         </td>
                       </tr>
                     ))
-                  ) : (data || []).map((row, index) => (
-                    <tr key={index} className="border-b border-black/[0.06] dark:border-white/[0.06] last:border-0 odd:bg-transparent even:bg-black/[0.02] dark:even:bg-white/[0.03] hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors">
-                      <td className="px-4 py-3 text-black/80 dark:text-white/80">{row.metric}</td>
-                      <td className="px-4 py-3 font-medium text-black dark:text-white">{row.value}</td>
+                  ) : (data || []).map((row: ReportRow, i) => (
+                    <tr key={i} className="border-b border-black/[0.06] dark:border-white/[0.06] last:border-0 hover:bg-black/[0.02] dark:hover:bg-white/[0.03] transition-colors">
+                      {cols.map((col) => (
+                        <td key={col.key} className="px-4 py-3 text-black/80 dark:text-white/80 max-w-[220px] truncate">
+                          {row[col.key] ?? '-'}
+                        </td>
+                      ))}
                     </tr>
                   ))}
                   {!isLoading && data?.length === 0 && (
-                     <tr>
-                       <td colSpan={2} className="px-4 py-12 text-center text-black/40 dark:text-white/40">ไม่พบข้อมูลตัวอย่าง</td>
-                     </tr>
+                    <tr>
+                      <td colSpan={cols.length || 1} className="px-4 py-12 text-center text-black/40 dark:text-white/40">
+                        ไม่พบข้อมูล
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>

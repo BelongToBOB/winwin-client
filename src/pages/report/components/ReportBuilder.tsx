@@ -1,3 +1,4 @@
+import { useSeminars } from '@/pages/seminars/hooks/useSeminars'
 import { exportReport } from '@/pages/report/hooks/useReport'
 import type { ReportType } from '@/types/report'
 
@@ -14,9 +15,11 @@ const selectStyle = {
 }
 
 export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
-  const handleExport = (format: 'csv' | 'pdf') => {
+  const { data: seminars = [] } = useSeminars()
+
+  const handleExport = () => {
     if (filters.seminar_id && filters.report_type) {
-      exportReport(filters.seminar_id, filters.report_type as ReportType, format)
+      exportReport(filters.seminar_id, filters.report_type as ReportType, 'csv')
     }
   }
 
@@ -25,53 +28,49 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
       <div className="text-[15px] font-semibold text-black dark:text-white mb-4 tracking-tight">
         สร้างรายงาน
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-[13px] text-black/60 dark:text-white/60 mb-1.5">สัมมนา</label>
           <select
             value={filters.seminar_id || ''}
             onChange={(e) => setFilter('seminar_id', e.target.value)}
-            className="w-full h-9 px-3 text-[13px] rounded-xl bg-black/[0.06] dark:bg-white/[0.08] border-0 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all duration-200 cursor-pointer appearance-none pr-8 relative"
+            className="w-full h-9 px-3 text-[13px] rounded-xl bg-black/[0.06] dark:bg-white/[0.08] border-0 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all duration-200 cursor-pointer appearance-none pr-8"
             style={selectStyle}
           >
             <option value="">เลือกสัมมนา...</option>
-            <option value="IB_MAR_2026">IB_MAR_2026</option>
-            <option value="IB_FEB_2026">IB_FEB_2026</option>
+            {seminars.map((s) => (
+              <option key={s.seminar_id} value={s.seminar_id}>
+                {s.seminar_id} — {s.course_name}
+              </option>
+            ))}
           </select>
         </div>
-        
+
         <div>
           <label className="block text-[13px] text-black/60 dark:text-white/60 mb-1.5">ประเภทรายงาน</label>
           <select
             value={filters.report_type || ''}
             onChange={(e) => setFilter('report_type', e.target.value)}
-            className="w-full h-9 px-3 text-[13px] rounded-xl bg-black/[0.06] dark:bg-white/[0.08] border-0 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all duration-200 cursor-pointer appearance-none pr-8 relative"
+            className="w-full h-9 px-3 text-[13px] rounded-xl bg-black/[0.06] dark:bg-white/[0.08] border-0 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all duration-200 cursor-pointer appearance-none pr-8"
             style={selectStyle}
           >
             <option value="">เลือกประเภทรายงาน...</option>
             <option value="registration_summary">สรุปการลงทะเบียน</option>
-            <option value="loan_profile">สรุปข้อมูลสินเชื่อ</option>
-            <option value="crm_pipeline">สรุป CRM pipeline</option>
-            <option value="attendance">สรุปการเข้าร่วม</option>
+            <option value="loan_profile">โปรไฟล์สินเชื่อ</option>
+            <option value="attendance">การเข้าร่วม</option>
+            <option value="crm_pipeline">ไปป์ไลน์ CRM</option>
           </select>
         </div>
       </div>
 
-      <div className="mt-4 flex gap-2">
-        <button 
-          onClick={() => handleExport('csv')}
+      <div className="mt-4">
+        <button
+          onClick={handleExport}
           disabled={!filters.seminar_id || !filters.report_type}
           className="h-9 px-4 rounded-xl text-[13px] font-medium text-[#007AFF] bg-[#007AFF]/10 hover:bg-[#007AFF]/15 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none transition-all duration-150"
         >
           ส่งออก CSV
-        </button>
-        <button 
-          onClick={() => handleExport('pdf')}
-          disabled={!filters.seminar_id || !filters.report_type}
-          className="h-9 px-4 rounded-xl text-[13px] font-medium text-[#007AFF] bg-[#007AFF]/10 hover:bg-[#007AFF]/15 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none transition-all duration-150"
-        >
-          ส่งออก PDF
         </button>
       </div>
     </div>

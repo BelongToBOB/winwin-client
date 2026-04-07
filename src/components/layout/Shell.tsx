@@ -7,7 +7,6 @@ const navItems = [
   { to: '/overview',       label: 'ภาพรวม',       dot: 'bg-blue-500' },
   { to: '/seminars',       label: 'สัมมนา',       dot: 'bg-[#AF52DE]' },
   { to: '/registrations',  label: 'ผู้ลงทะเบียน',  dot: 'bg-emerald-500' },
-  { to: '/crm',            label: 'ติดตามลูกค้า',   dot: 'bg-amber-500' },
   { to: '/report',         label: 'รายงาน',         dot: 'bg-gray-400' },
 ]
 
