@@ -74,7 +74,6 @@ export function OverviewPage() {
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">วันจัด</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ลงทะเบียน</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">เข้าร่วม</th>
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">% เข้าร่วม</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">สถานะ</th>
               </tr>
             </thead>
@@ -82,7 +81,7 @@ export function OverviewPage() {
               {isLoading ? (
                 Array.from({ length: 3 }).map((_, i) => (
                   <tr key={i} className="border-b border-black/[0.06] dark:border-white/[0.06] last:border-0">
-                    <td colSpan={7} className="px-4 py-3">
+                    <td colSpan={6} className="px-4 py-3">
                       <div className="animate-pulse bg-black/[0.06] dark:bg-white/[0.08] h-5 rounded w-full"></div>
                     </td>
                   </tr>
@@ -94,9 +93,6 @@ export function OverviewPage() {
                   <td className="px-4 py-3 text-black/80 dark:text-white/80">{formatDate(seminar.event_date)}</td>
                   <td className="px-4 py-3 text-black/80 dark:text-white/80 tabular-nums">{seminar.total}</td>
                   <td className="px-4 py-3 text-black/80 dark:text-white/80 tabular-nums">{seminar.attended}</td>
-                  <td className="px-4 py-3 text-black/80 dark:text-white/80 tabular-nums">
-                    {seminar.total > 0 ? Math.round((seminar.attended / seminar.total) * 100) : 0}%
-                  </td>
                   <td className="px-4 py-3 text-black/80 dark:text-white/80">
                     {renderStatusBadge(seminar.status)}
                   </td>
@@ -104,7 +100,7 @@ export function OverviewPage() {
               ))}
               {!isLoading && (!data?.seminars || data.seminars.length === 0) && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-black/40 dark:text-white/40">
+                  <td colSpan={6} className="px-4 py-12 text-center text-black/40 dark:text-white/40">
                     ไม่พบข้อมูล Seminar
                   </td>
                 </tr>
