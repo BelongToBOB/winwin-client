@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Outlet, NavLink } from 'react-router'
+import { Outlet, NavLink, useLocation } from 'react-router'
 import { Topbar } from './Topbar'
 import { cn } from '@/lib/utils'
 import { logout } from '@/components/auth/AuthGate'
@@ -12,7 +12,11 @@ const navItems = [
 ]
 
 export function Shell() {
+  const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [onlineCourseOpen, setOnlineCourseOpen] = useState(
+    location.pathname.startsWith('/online-courses')
+  )
 
   return (
     <div className="flex min-h-screen bg-[#F2F2F7] dark:bg-black font-sans text-black dark:text-white transition-colors duration-200">
@@ -60,6 +64,44 @@ export function Shell() {
               {item.label}
             </NavLink>
           ))}
+
+          {/* คอร์สออนไลน์ collapsible */}
+          <div>
+            <button
+              onClick={() => setOnlineCourseOpen(o => !o)}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[13px] text-black/70 dark:text-white/70 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] transition-all duration-150"
+            >
+              <span className="flex items-center gap-2.5">
+                <div className="w-2 h-2 rounded-full bg-[#AF52DE]" />
+                คอร์สออนไลน์
+              </span>
+              <svg
+                className={cn('w-3.5 h-3.5 text-black/30 dark:text-white/30 transition-transform duration-200', onlineCourseOpen && 'rotate-180')}
+                fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {onlineCourseOpen && (
+              <div className="ml-4 mt-0.5 space-y-0.5 border-l border-black/[0.06] dark:border-white/[0.06] pl-3">
+                <NavLink
+                  to="/online-courses/bank-uncensored"
+                  onClick={() => setSidebarOpen(false)}
+                  className={({ isActive }) =>
+                    cn(
+                      'flex items-center gap-2 px-2 py-1.5 rounded-lg text-[12px] transition-all duration-150',
+                      isActive
+                        ? 'bg-[#AF52DE]/10 text-[#AF52DE] font-medium'
+                        : 'text-black/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06]'
+                    )
+                  }
+                >
+                  Bank Uncensored
+                </NavLink>
+              </div>
+            )}
+          </div>
         </nav>
 
         <div className="p-5 flex items-center justify-between">

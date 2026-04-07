@@ -4,6 +4,7 @@ import { OverviewPage } from '@/pages/overview/OverviewPage'
 import { RegistrationsPage } from '@/pages/registrations/RegistrationsPage'
 import { ReportPage } from '@/pages/report/ReportPage'
 import { SeminarsPage } from '@/pages/seminars/SeminarsPage'
+import { BucPage } from '@/pages/buc/BucPage'
 import { AuthGate } from '@/components/auth/AuthGate'
 
 export function App() {
@@ -16,6 +17,7 @@ export function App() {
         <Route path="seminars" element={<SeminarsPage />} />
         <Route path="registrations" element={<RegistrationsPage />} />
         <Route path="report" element={<ReportPage />} />
+        <Route path="online-courses/bank-uncensored" element={<BucPage />} />
       </Route>
     </Routes>
     </AuthGate>
