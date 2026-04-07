@@ -28,11 +28,9 @@ export function OverviewPage() {
   return (
     <div className="flex flex-col gap-5">
       {/* Row 1 — Metric cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {isLoading ? (
           <>
-            <MetricCardSkeleton />
-            <MetricCardSkeleton />
             <MetricCardSkeleton />
             <MetricCardSkeleton />
           </>
@@ -42,22 +40,11 @@ export function OverviewPage() {
               label="ลงทะเบียนทั้งหมด"
               value={data?.total_registrations || 0}
             />
-            <MetricCard 
-              label="เข้าร่วมจริง" 
-              value={data?.attended || 0} 
-              delta={`อัตราการเข้าร่วม ${data?.attendance_rate || 0}%`} 
-            />
-            <MetricCard 
-              label="เคยกู้มาก่อน" 
-              value={data?.loan_before_pct || 0} 
+            <MetricCard
+              label="เคยกู้มาก่อน"
+              value={data?.loan_before_pct || 0}
               valueSuffix="%"
               delta={`${Math.round((data?.total_registrations || 0) * (data?.loan_before_pct || 0) / 100)} จาก ${data?.total_registrations || 0} คน`}
-            />
-            <MetricCard 
-              label="CRM active" 
-              value={data?.crm_active || 0} 
-              delta={`${data?.crm_overdue || 0} ต้อง follow-up`} 
-              deltaClassName="text-[#FF9500]"
             />
           </>
         )}

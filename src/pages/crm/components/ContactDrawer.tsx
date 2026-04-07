@@ -121,12 +121,12 @@ export function ContactDrawer({ open, onClose, data, overdueOnly }: ContactDrawe
           <div className="flex flex-col gap-4">
             <FormField label="CRM Stage">
               <select className={inputCls} value={form.crm_stage} onChange={e => set('crm_stage', e.target.value)}>
-                <option value="new">New</option>
-                <option value="contacted">Contacted</option>
-                <option value="interested">Interested</option>
-                <option value="proposal">Proposal</option>
-                <option value="closed_won">Closed Won</option>
-                <option value="closed_lost">Closed Lost</option>
+                <option value="new">ใหม่</option>
+                <option value="contacted">ติดต่อแล้ว</option>
+                <option value="interested">สนใจ</option>
+                <option value="proposal">เสนอราคา</option>
+                <option value="closed_won">ปิดการขายได้</option>
+                <option value="closed_lost">ปิดการขายไม่ได้</option>
               </select>
             </FormField>
 

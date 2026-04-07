@@ -23,7 +23,7 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
   return (
     <div className="bg-white/80 dark:bg-[#1C1C1E]/80 backdrop-blur-xl rounded-2xl border border-black/[0.08] dark:border-white/[0.08] p-5">
       <div className="text-[15px] font-semibold text-black dark:text-white mb-4 tracking-tight">
-        สร้าง Report
+        สร้างรายงาน
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

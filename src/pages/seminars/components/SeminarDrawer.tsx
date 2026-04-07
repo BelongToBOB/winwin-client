@@ -69,9 +69,9 @@ export function SeminarDrawer({ open, onClose, event }: SeminarDrawerProps) {
   }
 
   return (
-    <Drawer open={open} onClose={onClose} title={isEdit ? 'แก้ไข Seminar' : 'เพิ่ม Seminar'}>
+    <Drawer open={open} onClose={onClose} title={isEdit ? 'แก้ไขสัมมนา' : 'เพิ่มสัมมนา'}>
       <div className="flex flex-col gap-4 py-2">
-        <FormField label="Seminar ID">
+        <FormField label="รหัสสัมมนา">
           <input
             className={inputCls}
             value={form.seminar_id}
@@ -122,17 +122,17 @@ export function SeminarDrawer({ open, onClose, event }: SeminarDrawerProps) {
           <FormField label="รูปแบบ">
             <select className={inputCls} value={form.delivery_mode} onChange={e => set('delivery_mode', e.target.value)}>
               <option value="">เลือก...</option>
-              <option value="onsite">Onsite</option>
-              <option value="online">Online</option>
-              <option value="hybrid">Hybrid</option>
+              <option value="onsite">ออนไซต์</option>
+              <option value="online">ออนไลน์</option>
+              <option value="hybrid">ไฮบริด</option>
             </select>
           </FormField>
           <FormField label="สถานะ">
             <select className={inputCls} value={form.status} onChange={e => set('status', e.target.value)}>
-              <option value="upcoming">Upcoming</option>
-              <option value="ongoing">Ongoing</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="upcoming">กำลังจะมาถึง</option>
+              <option value="ongoing">กำลังดำเนินการ</option>
+              <option value="completed">เสร็จสิ้น</option>
+              <option value="cancelled">ยกเลิก</option>
             </select>
           </FormField>
         </div>

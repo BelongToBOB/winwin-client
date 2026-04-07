@@ -7,10 +7,10 @@ import type { CourseEvent } from '@/types/registration'
 
 const statusBadge = (status: string) => {
   switch (status) {
-    case 'upcoming':  return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#007AFF]/10 text-[#007AFF]">Upcoming</span>
-    case 'ongoing':   return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#FF9500]/12 text-[#FF9500]">Ongoing</span>
-    case 'completed': return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#34C759]/12 text-[#34C759]">Completed</span>
-    case 'cancelled': return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-black/[0.06] text-black/40 dark:bg-white/[0.06] dark:text-white/40">Cancelled</span>
+    case 'upcoming':  return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#007AFF]/10 text-[#007AFF]">กำลังจะมาถึง</span>
+    case 'ongoing':   return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#FF9500]/12 text-[#FF9500]">กำลังดำเนินการ</span>
+    case 'completed': return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#34C759]/12 text-[#34C759]">เสร็จสิ้น</span>
+    case 'cancelled': return <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-black/[0.06] text-black/40 dark:bg-white/[0.06] dark:text-white/40">ยกเลิก</span>
     default: return null
   }
 }
@@ -30,14 +30,14 @@ export function SeminarsPage() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[20px] font-semibold text-black dark:text-white">Seminars</h2>
-          <p className="text-[13px] text-black/40 dark:text-white/40 mt-0.5">จัดการ Course Events</p>
+          <h2 className="text-[20px] font-semibold text-black dark:text-white">สัมมนา</h2>
+          <p className="text-[13px] text-black/40 dark:text-white/40 mt-0.5">จัดการสัมมนา</p>
         </div>
         <button
           onClick={openAdd}
           className="h-9 px-4 rounded-xl text-[13px] font-medium text-white bg-[#AF52DE] hover:bg-[#AF52DE]/90 active:scale-[0.97] transition-all"
         >
-          + เพิ่ม Seminar
+          + เพิ่มสัมมนา
         </button>
       </div>
 
@@ -46,7 +46,7 @@ export function SeminarsPage() {
           <table className="w-full text-[13px]">
             <thead>
               <tr className="border-b border-black/[0.06] dark:border-white/[0.06]">
-                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">Seminar ID</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">รหัสสัมมนา</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ชื่อคอร์ส</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">วันที่</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">สถานที่</th>
@@ -103,7 +103,7 @@ export function SeminarsPage() {
               {!isLoading && (!data || data.length === 0) && (
                 <tr>
                   <td colSpan={8} className="px-4 py-16 text-center text-[13px] text-black/40 dark:text-white/40">
-                    ยังไม่มี Seminar — กด "เพิ่ม Seminar" เพื่อสร้างใหม่
+                    ยังไม่มีสัมมนา — กด "+ เพิ่มสัมมนา" เพื่อสร้างใหม่
                   </td>
                 </tr>
               )}
