@@ -261,12 +261,11 @@ export function BucDrawer({ open, onClose, editing }: BucDrawerProps) {
                   </div>
                 )
                 const rows = [
-                  n.line_id ? infoRow('LINE ID', n.line_id) : null,
+                  editing.line_id ? infoRow('LINE ID', editing.line_id) : null,
                   n.source?.length > 0 ? infoRow('รู้จักจาก', n.source.join(', ')) : null,
                   n.skill_level ? infoRow('ประสบการณ์', SKILL_LABELS[n.skill_level] ?? n.skill_level) : null,
                   n.goal?.length > 0 ? infoRow('เป้าหมาย', n.goal.map((g: string) => GOAL_LABELS[g] ?? g).join(', ')) : null,
                   n.interested_topics ? infoRow('หัวข้อที่สนใจ', n.interested_topics) : null,
-                  infoRow('ยินยอมรับข่าวสาร', n.consent_promo ? '✅ ยินยอม' : '❌ ไม่ยินยอม'),
                 ].filter(Boolean)
                 if (rows.length === 0) return null
                 return (
