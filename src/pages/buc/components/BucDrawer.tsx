@@ -236,7 +236,7 @@ export function BucDrawer({ open, onClose, editing }: BucDrawerProps) {
           {/* Edit mode — dates + parsed registration data */}
           {isEdit && (
             <>
-              {/* Dates */}
+              {/* Dates + LINE ID */}
               <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.06] px-3 py-2.5 flex flex-col gap-1.5">
                 <div className="flex justify-between text-[12px]">
                   <span className="text-black/40 dark:text-white/40">วันที่ออก BUC</span>
@@ -246,6 +246,12 @@ export function BucDrawer({ open, onClose, editing }: BucDrawerProps) {
                   <div className="flex justify-between text-[12px]">
                     <span className="text-black/40 dark:text-white/40">วันที่ลงทะเบียน</span>
                     <span className="text-[#34C759]">{formatThaiDate(editing.registered_at)}</span>
+                  </div>
+                )}
+                {editing.line_id && (
+                  <div className="flex justify-between text-[12px]">
+                    <span className="text-black/40 dark:text-white/40">LINE ID</span>
+                    <span className="text-black/70 dark:text-white/70">{editing.line_id}</span>
                   </div>
                 )}
               </div>
@@ -261,7 +267,6 @@ export function BucDrawer({ open, onClose, editing }: BucDrawerProps) {
                   </div>
                 )
                 const rows = [
-                  editing.line_id ? infoRow('LINE ID', editing.line_id) : null,
                   n.source?.length > 0 ? infoRow('รู้จักจาก', n.source.join(', ')) : null,
                   n.skill_level ? infoRow('ประสบการณ์', SKILL_LABELS[n.skill_level] ?? n.skill_level) : null,
                   n.goal?.length > 0 ? infoRow('เป้าหมาย', n.goal.map((g: string) => GOAL_LABELS[g] ?? g).join(', ')) : null,
@@ -275,6 +280,62 @@ export function BucDrawer({ open, onClose, editing }: BucDrawerProps) {
                   </div>
                 )
               })()}
+
+              {/* Receipt */}
+              {editing.needs_receipt ? (
+                <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.06] px-3 py-2.5">
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-black/30 dark:text-white/30 mb-2.5">ใบเสร็จ / ใบกำกับภาษี</div>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between text-[12px]">
+                      <span className="text-black/40 dark:text-white/40">ประเภท</span>
+                      <span className="text-black/70 dark:text-white/70">{editing.receipt_type === 'company' ? 'นิติบุคคล' : 'บุคคลธรรมดา'}</span>
+                    </div>
+                    <div className="flex justify-between text-[12px]">
+                      <span className="text-black/40 dark:text-white/40">ชื่อ</span>
+                      <span className="text-black/70 dark:text-white/70 text-right">{editing.receipt_name || '-'}</span>
+                    </div>
+                    <div className="flex justify-between text-[12px]">
+                      <span className="text-black/40 dark:text-white/40">ที่อยู่</span>
+                      <span className="text-black/70 dark:text-white/70 text-right max-w-[60%]">{editing.receipt_address || '-'}</span>
+                    </div>
+                    <div className="flex justify-between text-[12px]">
+                      <span className="text-black/40 dark:text-white/40">เลขภาษี</span>
+                      <span className="text-black/70 dark:text-white/70 font-mono">{editing.receipt_tax_id || '-'}</span>
+                    </div>
+                    <div className="flex justify-between text-[12px]">
+                      <span className="text-black/40 dark:text-white/40">อีเมลรับใบเสร็จ</span>
+                      <span className="text-black/70 dark:text-white/70">{editing.receipt_email || '-'}</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex justify-between text-[12px]">
+                  <span className="text-black/40 dark:text-white/40">ใบเสร็จ/ใบกำกับภาษี</span>
+                  <span className="text-black/50 dark:text-white/50">ไม่ต้องการ</span>
+                </div>
+              )}
+
+              {/* Withholding */}
+              {editing.needs_withholding ? (
+                <div className="rounded-xl bg-orange-500/5 border border-orange-500/20 px-3 py-2.5">
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-orange-500/70 mb-2.5">หัก ณ ที่จ่าย 3%</div>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between text-[12px]">
+                      <span className="text-black/40 dark:text-white/40">เบอร์ติดต่อฝ่ายบัญชี</span>
+                      <span className="text-black/70 dark:text-white/70">{editing.withholding_contact || '-'}</span>
+                    </div>
+                    <div className="flex justify-between text-[12px]">
+                      <span className="text-black/40 dark:text-white/40">ยืนยันส่งเอกสาร</span>
+                      <span className="text-[#34C759]">{editing.withholding_acknowledged ? '✅ ยืนยันแล้ว' : '❌ ยังไม่ยืนยัน'}</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex justify-between text-[12px]">
+                  <span className="text-black/40 dark:text-white/40">หัก ณ ที่จ่าย</span>
+                  <span className="text-black/50 dark:text-white/50">ไม่ต้องการ</span>
+                </div>
+              )}
             </>
           )}
 
