@@ -162,7 +162,7 @@ export function BucPage() {
                         onClick={() => openEdit(item)}
                         className="h-6 px-2.5 rounded-lg text-[11px] font-medium text-[#007AFF] bg-[#007AFF]/10 hover:bg-[#007AFF]/15 transition-colors"
                       >
-                        แก้ไข
+                        ตรวจสอบ
                       </button>
                       <button
                         onClick={() => handleDelete(item)}
