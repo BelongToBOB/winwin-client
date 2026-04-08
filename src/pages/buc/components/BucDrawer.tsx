@@ -254,6 +254,24 @@ export function BucDrawer({ open, onClose, editing }: BucDrawerProps) {
                     <span className="text-black/70 dark:text-white/70">{editing.line_id}</span>
                   </div>
                 )}
+                {editing.slip_url && editing.slip_url !== 'mock://no-slip' && editing.slip_url !== 'mock://slip' ? (
+                  <div className="flex justify-between items-center text-[12px]">
+                    <span className="text-black/40 dark:text-white/40">สลิปการชำระเงิน</span>
+                    <a
+                      href={editing.slip_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#007AFF] underline text-[12px]"
+                    >
+                      ดูสลิป ↗
+                    </a>
+                  </div>
+                ) : (
+                  <div className="flex justify-between text-[12px]">
+                    <span className="text-black/40 dark:text-white/40">สลิปการชำระเงิน</span>
+                    <span className="text-black/30 dark:text-white/30">ไม่มีข้อมูล</span>
+                  </div>
+                )}
               </div>
 
               {/* Parsed notes from registration form */}
