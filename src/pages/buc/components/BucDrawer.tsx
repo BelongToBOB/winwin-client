@@ -254,6 +254,14 @@ export function BucDrawer({ open, onClose, editing }: BucDrawerProps) {
                     <span className="text-black/70 dark:text-white/70">{editing.line_id}</span>
                   </div>
                 )}
+                <div className="flex justify-between text-[12px]">
+                  <span className="text-black/40 dark:text-white/40">ยอดเงินที่โอน</span>
+                  <span className="text-black/70 dark:text-white/70 font-semibold">
+                    {editing.payment_amount != null
+                      ? `${Number(editing.payment_amount).toLocaleString()} บาท`
+                      : <span className="font-normal text-black/30 dark:text-white/30">ไม่มีข้อมูล</span>}
+                  </span>
+                </div>
                 {editing.slip_url && editing.slip_url !== 'mock://no-slip' && editing.slip_url !== 'mock://slip' ? (
                   <div className="flex justify-between items-center text-[12px]">
                     <span className="text-black/40 dark:text-white/40">สลิปการชำระเงิน</span>
