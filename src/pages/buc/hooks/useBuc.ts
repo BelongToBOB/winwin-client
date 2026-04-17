@@ -41,10 +41,3 @@ export function useDeleteBuc() {
   })
 }
 
-export function useManualVerify() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (data: any) => api.post('/buc/manual-verify', data).then(r => r.data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: BUC_KEY }),
-  })
-}
