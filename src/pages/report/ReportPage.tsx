@@ -26,18 +26,32 @@ const COLUMNS: Record<string, ColDef[]> = {
     { key: 'phone',     label: 'เบอร์โทร' },
     { key: 'signature', label: 'ลายเซ็น', signature: true },
   ],
+  buc_summary: [
+    { key: '_index',         label: 'ลำดับ' },
+    { key: 'buc_code',       label: 'รหัส BUC' },
+    { key: 'customer_name',  label: 'ชื่อลูกค้า' },
+    { key: 'customer_phone', label: 'เบอร์โทร' },
+    { key: 'customer_email', label: 'อีเมล' },
+    { key: 'payment_amount', label: 'ยอดเงิน' },
+    { key: 'status',         label: 'สถานะ' },
+    { key: 'issued_at',      label: 'วันที่ออก' },
+  ],
 }
 
 const REPORT_LABELS: Record<string, string> = {
   registration_summary: 'สรุปการลงทะเบียน',
   attendance_sheet:     'ใบเซ็นชื่อเข้าร่วม',
+  buc_summary:          'Bank Uncensored — สรุปรหัส BUC',
 }
+
+const BUC_REPORTS = ['buc_summary']
 
 export function ReportPage() {
   const { filters, setFilter } = useUrlFilters({ seminar_id: '', report_type: '' })
 
+  const isBucReport = BUC_REPORTS.includes(filters.report_type)
   const { data, isLoading } = useReportPreview(
-    filters.seminar_id || '',
+    isBucReport ? '_buc' : (filters.seminar_id || ''),
     (filters.report_type as ReportType) || ''
   )
 
@@ -52,7 +66,7 @@ export function ReportPage() {
       />
 
       <div className="bg-white/80 dark:bg-[#1C1C1E]/80 backdrop-blur-xl rounded-2xl border border-black/[0.08] dark:border-white/[0.08] overflow-hidden flex-1">
-        {(!filters.seminar_id || !filters.report_type) ? (
+        {((!filters.seminar_id && !isBucReport) || !filters.report_type) ? (
           <div className="flex flex-col items-center justify-center py-16">
             <svg className="w-10 h-10 text-black/20 dark:text-white/20 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -65,7 +79,7 @@ export function ReportPage() {
           <>
             <div className="px-5 py-3.5 border-b border-black/[0.06] dark:border-white/[0.06] flex items-center justify-between">
               <h3 className="text-[17px] font-semibold text-black dark:text-white tracking-tight">
-                {filters.seminar_id} · {selectedLabel}
+                {isBucReport ? selectedLabel : `${filters.seminar_id} · ${selectedLabel}`}
               </h3>
               {!isLoading && data && (
                 <span className="text-[12px] text-black/40 dark:text-white/40">{data.length} รายการ</span>

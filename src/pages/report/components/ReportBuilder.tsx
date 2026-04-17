@@ -18,15 +18,16 @@ const selectStyle = {
 export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
   const { data: seminars = [] } = useSeminars()
 
-  const canExport = !!(filters.seminar_id && filters.report_type)
+  const isBucReport = filters.report_type === 'buc_summary'
+  const canExport = !!(filters.report_type && (isBucReport || filters.seminar_id))
 
   const handleExportCsv = () => {
-    if (canExport) exportReport(filters.seminar_id!, filters.report_type as ReportType, 'csv')
+    if (canExport) exportReport(isBucReport ? '' : filters.seminar_id!, filters.report_type as ReportType, 'csv')
   }
 
   const handleExportPdf = async () => {
     if (!canExport) return
-    const seminar_id = filters.seminar_id!
+    const seminar_id = isBucReport ? '' : filters.seminar_id!
     const report_type = filters.report_type as ReportType
     try {
       const res = await api.get('/report/preview', { params: { seminar_id, type: report_type } })
@@ -72,6 +73,23 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
           <td>${r.nickname || '-'}</td>
           <td>${r.phone || '-'}</td>
           <td style="height:44px"></td>
+        </tr>`).join('')
+      } else if (report_type === 'buc_summary') {
+        title = `Bank Uncensored — สรุปรหัส BUC`
+        thead = `<tr>
+          <th style="width:40px">ลำดับ</th>
+          <th>รหัส BUC</th><th>ชื่อลูกค้า</th><th>เบอร์โทร</th>
+          <th>อีเมล</th><th>ยอดเงิน</th><th>สถานะ</th><th>วันที่ออก</th>
+        </tr>`
+        tbody = rows.map((r: any, i: number) => `<tr>
+          <td style="text-align:center">${i + 1}</td>
+          <td>${r.buc_code || '-'}</td>
+          <td>${r.customer_name || '-'}</td>
+          <td>${r.customer_phone || '-'}</td>
+          <td>${r.customer_email || '-'}</td>
+          <td>${r.payment_amount || '-'}</td>
+          <td>${r.status || '-'}</td>
+          <td>${r.issued_at || '-'}</td>
         </tr>`).join('')
       }
 
@@ -124,23 +142,6 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-[13px] text-black/60 dark:text-white/60 mb-1.5">สัมมนา</label>
-          <select
-            value={filters.seminar_id || ''}
-            onChange={(e) => setFilter('seminar_id', e.target.value)}
-            className="w-full h-9 px-3 text-[13px] rounded-xl bg-black/[0.06] dark:bg-white/[0.08] border-0 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all duration-200 cursor-pointer appearance-none pr-8"
-            style={selectStyle}
-          >
-            <option value="">เลือกสัมมนา...</option>
-            {seminars.map((s) => (
-              <option key={s.seminar_id} value={s.seminar_id}>
-                {s.seminar_id} — {s.course_name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
           <label className="block text-[13px] text-black/60 dark:text-white/60 mb-1.5">ประเภทรายงาน</label>
           <select
             value={filters.report_type || ''}
@@ -149,10 +150,34 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
             style={selectStyle}
           >
             <option value="">เลือกประเภทรายงาน...</option>
-            <option value="registration_summary">สรุปการลงทะเบียน</option>
-            <option value="attendance_sheet">ใบเซ็นชื่อเข้าร่วม</option>
+            <optgroup label="สัมมนา">
+              <option value="registration_summary">สรุปการลงทะเบียน</option>
+              <option value="attendance_sheet">ใบเซ็นชื่อเข้าร่วม</option>
+            </optgroup>
+            <optgroup label="คอร์สออนไลน์">
+              <option value="buc_summary">Bank Uncensored — สรุปรหัส BUC</option>
+            </optgroup>
           </select>
         </div>
+
+        {!isBucReport && (
+          <div>
+            <label className="block text-[13px] text-black/60 dark:text-white/60 mb-1.5">สัมมนา</label>
+            <select
+              value={filters.seminar_id || ''}
+              onChange={(e) => setFilter('seminar_id', e.target.value)}
+              className="w-full h-9 px-3 text-[13px] rounded-xl bg-black/[0.06] dark:bg-white/[0.08] border-0 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 transition-all duration-200 cursor-pointer appearance-none pr-8"
+              style={selectStyle}
+            >
+              <option value="">เลือกสัมมนา...</option>
+              {seminars.map((s) => (
+                <option key={s.seminar_id} value={s.seminar_id}>
+                  {s.seminar_id} — {s.course_name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       <div className="mt-4 flex gap-2">
