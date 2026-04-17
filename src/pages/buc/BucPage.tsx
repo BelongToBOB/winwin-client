@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useBucStats, useBucList, useDeleteBuc } from './hooks/useBuc'
 import { BucDrawer } from './components/BucDrawer'
+import { ManualVerifyDrawer } from './components/ManualVerifyDrawer'
 import { confirmDelete } from '@/lib/confirm'
 import { notify } from '@/lib/toast'
 import { formatDate } from '@/lib/utils'
@@ -36,6 +37,7 @@ export function BucPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<any | null>(null)
+  const [manualOpen, setManualOpen] = useState(false)
 
   const { data: stats, isLoading: statsLoading } = useBucStats()
   const { data: list, isLoading: listLoading } = useBucList(statusFilter || undefined)
@@ -78,12 +80,20 @@ export function BucPage() {
           <h2 className="text-[20px] font-semibold text-black dark:text-white">Bank Uncensored</h2>
           <p className="text-[13px] text-black/40 dark:text-white/40 mt-0.5">จัดการรหัสลูกค้าคอร์สออนไลน์</p>
         </div>
-        <button
-          onClick={openAdd}
-          className="h-9 px-4 rounded-xl text-[13px] font-medium text-white bg-[#34C759] hover:bg-[#34C759]/90 active:scale-[0.97] transition-all"
-        >
-          + ออก BUC ใหม่
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setManualOpen(true)}
+            className="h-9 px-4 rounded-xl text-[13px] font-medium text-[#007AFF] border border-[#007AFF] bg-white dark:bg-transparent hover:bg-[#007AFF]/5 active:scale-[0.97] transition-all"
+          >
+            แนบสลิป Manual
+          </button>
+          <button
+            onClick={openAdd}
+            className="h-9 px-4 rounded-xl text-[13px] font-medium text-white bg-[#34C759] hover:bg-[#34C759]/90 active:scale-[0.97] transition-all"
+          >
+            + ออก BUC ใหม่
+          </button>
+        </div>
       </div>
 
       {/* Stat cards */}
@@ -193,6 +203,7 @@ export function BucPage() {
       </div>
 
       <BucDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} editing={editingItem} />
+      <ManualVerifyDrawer open={manualOpen} onClose={() => setManualOpen(false)} />
     </div>
   )
 }
