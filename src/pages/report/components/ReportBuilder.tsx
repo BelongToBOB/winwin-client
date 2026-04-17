@@ -79,7 +79,7 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
         thead = `<tr>
           <th style="width:40px">ลำดับ</th>
           <th>รหัส BUC</th><th>ชื่อลูกค้า</th><th>เบอร์โทร</th>
-          <th>อีเมล</th><th>ยอดเงิน</th><th>สถานะ</th><th>วันที่ออก</th>
+          <th>อีเมล</th><th>LINE ID</th><th>ยอดเงิน</th><th>สถานะ</th><th>วันที่ออก</th>
         </tr>`
         tbody = rows.map((r: any, i: number) => `<tr>
           <td style="text-align:center">${i + 1}</td>
@@ -87,6 +87,7 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
           <td>${r.customer_name || '-'}</td>
           <td>${r.customer_phone || '-'}</td>
           <td>${r.customer_email || '-'}</td>
+          <td>${r.line_id || '-'}</td>
           <td>${r.payment_amount || '-'}</td>
           <td>${r.status || '-'}</td>
           <td>${r.issued_at || '-'}</td>

@@ -32,6 +32,7 @@ const COLUMNS: Record<string, ColDef[]> = {
     { key: 'customer_name',  label: 'ชื่อลูกค้า' },
     { key: 'customer_phone', label: 'เบอร์โทร' },
     { key: 'customer_email', label: 'อีเมล' },
+    { key: 'line_id',        label: 'LINE ID' },
     { key: 'payment_amount', label: 'ยอดเงิน' },
     { key: 'status',         label: 'สถานะ' },
     { key: 'issued_at',      label: 'วันที่ออก' },
