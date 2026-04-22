@@ -15,12 +15,8 @@ const inputCls = 'w-full h-9 px-3 rounded-xl text-[13px] bg-black/[0.04] dark:bg
 const textareaCls = 'w-full px-3 py-2 rounded-xl text-[13px] bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] text-black/80 dark:text-white/80 focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 resize-none'
 
 function rescheduleStatusLabel(status: string): string {
-  switch (status) {
-    case 'requested': return 'ขอเลื่อนไปรอบถัดไป'
-    case 'confirmed': return 'เลื่อนแล้ว (ยืนยัน)'
-    case 'cancelled': return 'ยกเลิก'
-    default: return 'ไม่ได้เลื่อน'
-  }
+  if (status === 'rescheduled') return 'เลื่อนคลาส'
+  return 'ไม่ได้เลื่อน'
 }
 
 interface RegistrantDrawerProps {
@@ -325,9 +321,7 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
               onChange={e => setRescheduleForm(f => ({ ...f, reschedule_status: e.target.value }))}
             >
               <option value="none">ไม่ได้เลื่อน</option>
-              <option value="requested">ขอเลื่อนไปรอบถัดไป</option>
-              <option value="confirmed">เลื่อนแล้ว (ยืนยัน)</option>
-              <option value="cancelled">ยกเลิก</option>
+              <option value="rescheduled">เลื่อนคลาส</option>
             </select>
           </FormField>
 

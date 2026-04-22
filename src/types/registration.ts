@@ -16,7 +16,7 @@ export interface Registration {
   reg_status: 'pending' | 'confirmed' | 'attended' | 'cancelled' | 'no_show'
   registered_at: string
   seminar_id: string
-  reschedule_status: 'none' | 'requested' | 'confirmed' | 'cancelled'
+  reschedule_status: 'none' | 'rescheduled'
   reschedule_note?: string | null
   reschedule_updated_at?: string | null
 }
