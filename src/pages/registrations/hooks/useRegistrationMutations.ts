@@ -56,3 +56,15 @@ export function useUpdateRegistrationProfile(filters: Record<string, string>) {
     onSuccess: () => qc.invalidateQueries({ queryKey: qk.registrations(filters) }),
   })
 }
+
+export function useUpdateReschedule(filters: Record<string, string>) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, reschedule_status, reschedule_note }: {
+      id: string
+      reschedule_status: string
+      reschedule_note?: string
+    }) => api.patch(`/registrations/${id}/reschedule`, { reschedule_status, reschedule_note }).then(r => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: qk.registrations(filters) }),
+  })
+}

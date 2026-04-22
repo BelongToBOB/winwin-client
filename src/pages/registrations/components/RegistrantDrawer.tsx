@@ -4,14 +4,24 @@ import { FormField } from '@/components/ui/FormField'
 import {
   useUpdateRegistrationProfile,
   useDeleteRegistration,
+  useUpdateReschedule,
 } from '../hooks/useRegistrationMutations'
 import { confirmDelete } from '@/lib/confirm'
 import { notify } from '@/lib/toast'
-import { getInitials } from '@/lib/utils'
+import { getInitials, formatDate } from '@/lib/utils'
 import type { Registration } from '@/types/registration'
 
 const inputCls = 'w-full h-9 px-3 rounded-xl text-[13px] bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] text-black/80 dark:text-white/80 focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30'
 const textareaCls = 'w-full px-3 py-2 rounded-xl text-[13px] bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] text-black/80 dark:text-white/80 focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 resize-none'
+
+function rescheduleStatusLabel(status: string): string {
+  switch (status) {
+    case 'requested': return 'ขอเลื่อนไปรอบถัดไป'
+    case 'confirmed': return 'เลื่อนแล้ว (ยืนยัน)'
+    case 'cancelled': return 'ยกเลิก'
+    default: return 'ไม่ได้เลื่อน'
+  }
+}
 
 interface RegistrantDrawerProps {
   open: boolean
@@ -25,6 +35,12 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
 
   const updateProfile = useUpdateRegistrationProfile(filters)
   const deleteReg = useDeleteRegistration(filters)
+  const updateReschedule = useUpdateReschedule(filters)
+
+  const [rescheduleForm, setRescheduleForm] = useState({
+    reschedule_status: data?.reschedule_status ?? 'none',
+    reschedule_note: data?.reschedule_note ?? '',
+  })
 
   const [form, setForm] = useState({
     loan_amount_range: data?.loan_amount_range ?? '',
@@ -46,6 +62,10 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
         channels: data.channels ?? '',
         objective: data.objective ?? '',
         loan_problems: data.loan_problems ?? '',
+      })
+      setRescheduleForm({
+        reschedule_status: data.reschedule_status ?? 'none',
+        reschedule_note: data.reschedule_note ?? '',
       })
       setEditing(false)
       setSaveError(null)
@@ -93,6 +113,19 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
       .catch(() => {})
   }
 
+  const handleSaveReschedule = async () => {
+    const savePromise = updateReschedule.mutateAsync({
+      id: data.id,
+      reschedule_status: rescheduleForm.reschedule_status,
+      reschedule_note: rescheduleForm.reschedule_note || undefined,
+    })
+    notify.promise(savePromise, {
+      loading: 'กำลังบันทึก...',
+      success: 'บันทึกสถานะเลื่อนคลาสเรียบร้อย',
+      error: 'ไม่สามารถบันทึกได้',
+    })
+  }
+
   return (
     <Drawer open={open} onClose={onClose} title="รายละเอียดผู้ลงทะเบียน">
       <div className="flex flex-col gap-5">
@@ -106,8 +139,11 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
               <h3 className="text-[17px] font-semibold text-black dark:text-white tracking-tight">
                 {data.first_name} {data.last_name} {data.nickname && `(${data.nickname})`}
               </h3>
-              <div className="mt-1 flex items-center gap-2">
+              <div className="mt-1 flex items-center gap-2 flex-wrap">
                 <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#34C759]/12 text-[#34C759]">ลงทะเบียนสำเร็จ</span>
+                {data.reschedule_status && data.reschedule_status !== 'none' && (
+                  <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#FF9500]/12 text-[#FF9500]">เลื่อนคลาส</span>
+                )}
                 <span className="text-[11px] text-black/40 dark:text-white/40">{data.job_category}</span>
               </div>
             </div>
@@ -253,6 +289,68 @@ export function RegistrantDrawer({ open, onClose, data, filters }: RegistrantDra
             </div>
           </div>
         )}
+
+        {/* Reschedule Section */}
+        <div className="h-px w-full bg-black/[0.08] dark:bg-white/[0.08]" />
+
+        <div className="flex flex-col gap-3">
+          <div className="text-[12px] font-semibold text-black/60 dark:text-white/60 uppercase tracking-wide">
+            สถานะการเลื่อนคลาส
+          </div>
+
+          {data.reschedule_status && data.reschedule_status !== 'none' && (
+            <div className="rounded-xl bg-[#FF9500]/10 border border-[#FF9500]/25 p-3 flex flex-col gap-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[12px] font-semibold text-[#FF9500]">
+                  {rescheduleStatusLabel(data.reschedule_status)}
+                </span>
+                {data.reschedule_updated_at && (
+                  <span className="text-[10px] text-[#FF9500]/80">
+                    บันทึก {formatDate(data.reschedule_updated_at)}
+                  </span>
+                )}
+              </div>
+              {data.reschedule_note && (
+                <p className="text-[12px] text-black/70 dark:text-white/70 whitespace-pre-wrap">
+                  {data.reschedule_note}
+                </p>
+              )}
+            </div>
+          )}
+
+          <FormField label="เปลี่ยนสถานะ">
+            <select
+              className={inputCls}
+              value={rescheduleForm.reschedule_status}
+              onChange={e => setRescheduleForm(f => ({ ...f, reschedule_status: e.target.value }))}
+            >
+              <option value="none">ไม่ได้เลื่อน</option>
+              <option value="requested">ขอเลื่อนไปรอบถัดไป</option>
+              <option value="confirmed">เลื่อนแล้ว (ยืนยัน)</option>
+              <option value="cancelled">ยกเลิก</option>
+            </select>
+          </FormField>
+
+          <FormField label="หมายเหตุการเลื่อนคลาส">
+            <textarea
+              className={textareaCls}
+              rows={2}
+              value={rescheduleForm.reschedule_note}
+              onChange={e => setRescheduleForm(f => ({ ...f, reschedule_note: e.target.value }))}
+              placeholder="เหตุผล / รายละเอียดการเลื่อน..."
+            />
+          </FormField>
+
+          <div className="flex justify-end">
+            <button
+              onClick={handleSaveReschedule}
+              disabled={updateReschedule.isPending}
+              className="h-8 px-4 rounded-xl text-[12px] font-medium text-white bg-[#FF9500] hover:bg-[#FF9500]/90 disabled:opacity-50 transition-colors"
+            >
+              {updateReschedule.isPending ? 'กำลังบันทึก...' : 'บันทึกสถานะเลื่อนคลาส'}
+            </button>
+          </div>
+        </div>
       </div>
     </Drawer>
   )

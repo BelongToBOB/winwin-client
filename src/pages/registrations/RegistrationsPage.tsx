@@ -96,7 +96,16 @@ export function RegistrationsPage() {
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-black/[0.06] text-black/40 dark:bg-white/[0.06] dark:text-white/40">ไม่เคย</span>
                     )}
                   </td>
-                  <td className="px-4 py-3">{statusBadge}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap gap-1.5">
+                      {statusBadge}
+                      {reg.reschedule_status && reg.reschedule_status !== 'none' && (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#FF9500]/12 text-[#FF9500]">
+                          เลื่อนคลาส
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-4 py-3 text-black/80 dark:text-white/80 tabular-nums hidden sm:table-cell">{formatDate(reg.registered_at)}</td>
                   <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
                     <button

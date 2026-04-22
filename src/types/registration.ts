@@ -16,6 +16,9 @@ export interface Registration {
   reg_status: 'pending' | 'confirmed' | 'attended' | 'cancelled' | 'no_show'
   registered_at: string
   seminar_id: string
+  reschedule_status: 'none' | 'requested' | 'confirmed' | 'cancelled'
+  reschedule_note?: string | null
+  reschedule_updated_at?: string | null
 }
 
 export interface OverviewData {
