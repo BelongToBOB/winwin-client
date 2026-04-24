@@ -6,4 +6,5 @@ export const qk = {
   report:        (seminarId: string, type: string) => ['report', seminarId, type] as const,
   seminars:      () => ['seminars'] as const,
   interactions:  (contactId: string) => ['interactions', contactId] as const,
+  bhc:           (filters: Record<string, string>) => ['bhc', filters] as const,
 }

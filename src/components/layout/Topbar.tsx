@@ -14,6 +14,8 @@ const titleMap: Record<string, { title: string; subtitle: string }> = {
   '/registrations': { title: 'ผู้ลงทะเบียน', subtitle: 'รายชื่อผู้ลงทะเบียนเข้าสัมมนา' },
   '/crm': { title: 'ติดตามลูกค้า', subtitle: 'ติดตามสถานะการขายและการกู้' },
   '/report': { title: 'รายงาน', subtitle: 'สร้างและส่งออกรายงาน' },
+  '/online-courses/business-health-check': { title: 'Business Health Check', subtitle: 'รายชื่อผู้ลงทะเบียนคอร์ส BHC' },
+  '/online-courses/bank-uncensored': { title: 'Bank Uncensored', subtitle: 'จัดการรหัสคอร์ส BUC' },
 }
 
 export function Topbar({ onMenuClick }: { onMenuClick?: () => void }) {

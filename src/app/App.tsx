@@ -5,6 +5,7 @@ import { RegistrationsPage } from '@/pages/registrations/RegistrationsPage'
 import { ReportPage } from '@/pages/report/ReportPage'
 import { SeminarsPage } from '@/pages/seminars/SeminarsPage'
 import { BucPage } from '@/pages/buc/BucPage'
+import { BhcPage } from '@/pages/bhc-registrations/BhcPage'
 import { AuthGate } from '@/components/auth/AuthGate'
 
 export function App() {
@@ -18,6 +19,7 @@ export function App() {
         <Route path="registrations" element={<RegistrationsPage />} />
         <Route path="report" element={<ReportPage />} />
         <Route path="online-courses/bank-uncensored" element={<BucPage />} />
+        <Route path="online-courses/business-health-check" element={<BhcPage />} />
       </Route>
     </Routes>
     </AuthGate>
