@@ -59,7 +59,7 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
           <td>${r.reg_status || '-'}</td>
         </tr>`).join('')
       } else if (report_type === 'attendance_sheet') {
-        const TOTAL_ROWS = 30
+        const TOTAL_ROWS = 25
         title = `ใบเซ็นชื่อเข้าร่วม — ${seminar_id} ${seminarName}`
         thead = `<tr>
           <th style="width:36px">ลำดับ</th>
@@ -106,17 +106,17 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
         <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
         <style>
           * { margin:0; padding:0; box-sizing:border-box; }
-          body { font-family:'Sarabun',sans-serif; font-size:13px; color:#000; padding:15mm; }
-          .header { text-align:center; margin-bottom:4px; }
-          .header h1 { font-size:14px; font-weight:700; line-height:1.2; }
+          body { font-family:'Sarabun',sans-serif; font-size:13px; color:#000; padding:6mm 6mm 4mm; }
+          .header { text-align:center; margin-bottom:2px; }
+          .header h1 { font-size:15px; font-weight:700; line-height:1.1; }
           .header p { font-size:11px; color:#444; margin-top:1px; }
-          .meta { display:flex; justify-content:space-between; font-size:10px; color:#666; margin-bottom:4px; }
-          table { width:100%; border-collapse:collapse; font-size:12px; table-layout:fixed; }
-          th { background:#1e293b; color:#fff; padding:2px 4px; text-align:left; font-weight:600; border:1px solid #333; font-size:12px; line-height:1.2; }
-          td { padding:1px 4px; border:1px solid #bbb; vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.2; height:5.2mm; }
+          .meta { display:flex; justify-content:space-between; font-size:10px; color:#666; margin-bottom:2px; }
+          table { width:100%; border-collapse:collapse; font-size:14px; table-layout:fixed; }
+          th { background:#1e293b; color:#fff; padding:4px 6px; text-align:left; font-weight:600; border:1px solid #333; font-size:14px; line-height:1.3; }
+          td { padding:3px 6px; border:1px solid #bbb; vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.3; height:7mm; }
           tr:nth-child(even) td { background:#f8f8f8; }
-          .footer { margin-top:4px; font-size:9px; color:#999; text-align:right; }
-          @media print { @page { size:A4 landscape; margin:8mm; } body { padding:0; } }
+          .footer { margin-top:2px; font-size:9px; color:#999; text-align:right; }
+          @media print { @page { size:A4 landscape; margin:6mm; } body { padding:0; } }
         </style>
       </head><body>
         <div class="header">
