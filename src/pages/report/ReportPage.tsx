@@ -26,6 +26,18 @@ const COLUMNS: Record<string, ColDef[]> = {
     { key: 'phone',     label: 'เบอร์โทร' },
     { key: 'signature', label: 'ลายเซ็น', signature: true },
   ],
+  loan_profile: [
+    { key: '_index',           label: 'ลำดับ' },
+    { key: 'first_name',       label: 'ชื่อ' },
+    { key: 'last_name',        label: 'นามสกุล' },
+    { key: 'nickname',         label: 'ชื่อเล่น' },
+    { key: 'phone',            label: 'เบอร์โทร' },
+    { key: 'loan_amount_range',label: 'วงเงินกู้' },
+    { key: 'loan_before',      label: 'เคยกู้' },
+    { key: 'credit_banks',     label: 'ธนาคาร' },
+    { key: 'objective',        label: 'วัตถุประสงค์' },
+    { key: 'loan_problems',    label: 'ปัญหาการกู้' },
+  ],
   buc_summary: [
     { key: '_index',         label: 'ลำดับ' },
     { key: 'buc_code',       label: 'รหัส BUC' },
@@ -42,6 +54,7 @@ const COLUMNS: Record<string, ColDef[]> = {
 const REPORT_LABELS: Record<string, string> = {
   registration_summary: 'สรุปการลงทะเบียน',
   attendance_sheet:     'ใบเซ็นชื่อเข้าร่วม',
+  loan_profile:         'วัตถุประสงค์ & ปัญหาการกู้',
   buc_summary:          'Bank Uncensored — สรุปรหัส BUC',
 }
 

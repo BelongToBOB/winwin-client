@@ -84,6 +84,26 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
           <td></td><td></td><td></td><td></td><td></td>
         </tr>`).join('')
         tbody = dataRows + emptyRows
+      } else if (report_type === 'loan_profile') {
+        title = `วัตถุประสงค์ & ปัญหาการกู้ — ${seminar_id} ${seminarName}`
+        thead = `<tr>
+          <th style="width:36px">ลำดับ</th>
+          <th>ชื่อ</th><th>นามสกุล</th><th>ชื่อเล่น</th>
+          <th>เบอร์โทร</th><th>วงเงินกู้</th><th>เคยกู้</th>
+          <th>ธนาคาร</th><th>วัตถุประสงค์</th><th>ปัญหาการกู้</th>
+        </tr>`
+        tbody = rows.map((r: any, i: number) => `<tr>
+          <td style="text-align:center">${i + 1}</td>
+          <td>${r.first_name || '-'}</td>
+          <td>${r.last_name || '-'}</td>
+          <td>${r.nickname || '-'}</td>
+          <td>${r.phone || '-'}</td>
+          <td>${r.loan_amount_range || '-'}</td>
+          <td>${r.loan_before || '-'}</td>
+          <td>${r.credit_banks || '-'}</td>
+          <td style="white-space:normal;max-width:200px">${r.objective || '-'}</td>
+          <td style="white-space:normal;max-width:200px">${r.loan_problems || '-'}</td>
+        </tr>`).join('')
       } else if (report_type === 'buc_summary') {
         title = `Bank Uncensored — สรุปรหัส BUC`
         thead = `<tr>
@@ -164,6 +184,7 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
             <optgroup label="สัมมนา">
               <option value="registration_summary">สรุปการลงทะเบียน</option>
               <option value="attendance_sheet">ใบเซ็นชื่อเข้าร่วม</option>
+              <option value="loan_profile">วัตถุประสงค์ & ปัญหาการกู้</option>
             </optgroup>
             <optgroup label="คอร์สออนไลน์">
               <option value="buc_summary">Bank Uncensored — สรุปรหัส BUC</option>
