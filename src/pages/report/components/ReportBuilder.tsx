@@ -120,7 +120,7 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
         </style>
       </head><body>
         <div class="header">
-          <h1>Win Win Wealth</h1>
+          <h1>WinWin Wealth Creation</h1>
           <p>${title}</p>
         </div>
         <div class="meta">
@@ -128,7 +128,7 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
           <span>วันที่พิมพ์: ${printDate}</span>
         </div>
         <table><thead>${thead}</thead><tbody>${tbody}</tbody></table>
-        <div class="footer">Win Win Wealth Creation Co., Ltd. — ระบบจัดการภายใน</div>
+        <div class="footer">WinWin Wealth Creation Co., Ltd. — ระบบจัดการภายใน</div>
         <script>window.onload = function(){ window.print(); }</script>
       </body></html>`
 
