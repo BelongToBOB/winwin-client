@@ -25,6 +25,10 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
     if (canExport) exportReport(isBucReport ? '' : filters.seminar_id!, filters.report_type as ReportType, 'csv')
   }
 
+  const handleExportXml = () => {
+    if (canExport) exportReport(isBucReport ? '' : filters.seminar_id!, filters.report_type as ReportType, 'xml')
+  }
+
   const handleExportPdf = async () => {
     if (!canExport) return
     const seminar_id = isBucReport ? '' : filters.seminar_id!
@@ -194,6 +198,13 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
           className="h-9 px-4 rounded-xl text-[13px] font-medium text-[#007AFF] bg-[#007AFF]/10 hover:bg-[#007AFF]/15 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none transition-all duration-150"
         >
           ส่งออก CSV
+        </button>
+        <button
+          onClick={handleExportXml}
+          disabled={!canExport}
+          className="h-9 px-4 rounded-xl text-[13px] font-medium text-[#34C759] bg-[#34C759]/10 hover:bg-[#34C759]/15 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none transition-all duration-150"
+        >
+          ส่งออก XML
         </button>
         <button
           onClick={handleExportPdf}
