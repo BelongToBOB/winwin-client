@@ -59,21 +59,27 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
           <td>${r.reg_status || '-'}</td>
         </tr>`).join('')
       } else if (report_type === 'attendance_sheet') {
+        const TOTAL_ROWS = 30
         title = `ใบเซ็นชื่อเข้าร่วม — ${seminar_id} ${seminarName}`
         thead = `<tr>
-          <th style="width:40px">ลำดับ</th>
+          <th style="width:36px">ลำดับ</th>
           <th>ชื่อ</th><th>นามสกุล</th><th>ชื่อเล่น</th>
           <th>เบอร์โทร</th>
-          <th style="width:180px">ลายเซ็น</th>
+          <th style="width:160px">ลายเซ็น</th>
         </tr>`
-        tbody = rows.map((r: any, i: number) => `<tr>
+        const dataRows = rows.slice(0, TOTAL_ROWS).map((r: any, i: number) => `<tr>
           <td style="text-align:center">${i + 1}</td>
           <td>${r.first_name || '-'}</td>
           <td>${r.last_name || '-'}</td>
           <td>${r.nickname || '-'}</td>
           <td>${r.phone || '-'}</td>
-          <td style="height:44px"></td>
+          <td></td>
         </tr>`).join('')
+        const emptyRows = Array.from({ length: Math.max(0, TOTAL_ROWS - rows.length) }, (_, i) => `<tr>
+          <td style="text-align:center">${rows.length + i + 1}</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>`).join('')
+        tbody = dataRows + emptyRows
       } else if (report_type === 'buc_summary') {
         title = `Bank Uncensored — สรุปรหัส BUC`
         thead = `<tr>
@@ -101,16 +107,16 @@ export function ReportBuilder({ filters, setFilter }: ReportBuilderProps) {
         <style>
           * { margin:0; padding:0; box-sizing:border-box; }
           body { font-family:'Sarabun',sans-serif; font-size:13px; color:#000; padding:15mm; }
-          .header { text-align:center; margin-bottom:14px; }
-          .header h1 { font-size:18px; font-weight:700; }
-          .header p { font-size:13px; color:#444; margin-top:2px; }
-          .meta { display:flex; justify-content:space-between; font-size:12px; color:#666; margin-bottom:10px; }
-          table { width:100%; border-collapse:collapse; font-size:12px; }
-          th { background:#1e293b; color:#fff; padding:8px 6px; text-align:left; font-weight:600; border:1px solid #333; }
-          td { padding:6px; border:1px solid #bbb; vertical-align:middle; }
+          .header { text-align:center; margin-bottom:4px; }
+          .header h1 { font-size:14px; font-weight:700; line-height:1.2; }
+          .header p { font-size:11px; color:#444; margin-top:1px; }
+          .meta { display:flex; justify-content:space-between; font-size:10px; color:#666; margin-bottom:4px; }
+          table { width:100%; border-collapse:collapse; font-size:10px; table-layout:fixed; }
+          th { background:#1e293b; color:#fff; padding:2px 4px; text-align:left; font-weight:600; border:1px solid #333; font-size:10px; line-height:1.3; }
+          td { padding:1px 4px; border:1px solid #bbb; vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.3; height:5mm; }
           tr:nth-child(even) td { background:#f8f8f8; }
-          .footer { margin-top:12px; font-size:11px; color:#999; text-align:right; }
-          @media print { @page { size:A4 landscape; margin:10mm; } }
+          .footer { margin-top:4px; font-size:9px; color:#999; text-align:right; }
+          @media print { @page { size:A4 landscape; margin:8mm; } body { padding:0; } }
         </style>
       </head><body>
         <div class="header">
