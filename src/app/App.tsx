@@ -6,6 +6,7 @@ import { ReportPage } from '@/pages/report/ReportPage'
 import { SeminarsPage } from '@/pages/seminars/SeminarsPage'
 import { BucPage } from '@/pages/buc/BucPage'
 import { BhcPage } from '@/pages/bhc-registrations/BhcPage'
+import { LmsOrdersPage } from '@/pages/lms-orders/LmsOrdersPage'
 import { AuthGate } from '@/components/auth/AuthGate'
 
 export function App() {
@@ -20,6 +21,7 @@ export function App() {
         <Route path="report" element={<ReportPage />} />
         <Route path="online-courses/bank-uncensored" element={<BucPage />} />
         <Route path="online-courses/business-health-check" element={<BhcPage />} />
+        <Route path="lms-orders" element={<LmsOrdersPage />} />
       </Route>
     </Routes>
     </AuthGate>

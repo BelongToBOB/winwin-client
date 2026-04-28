@@ -7,4 +7,7 @@ export const qk = {
   seminars:      () => ['seminars'] as const,
   interactions:  (contactId: string) => ['interactions', contactId] as const,
   bhc:           (filters: Record<string, string>) => ['bhc', filters] as const,
+  lmsStats:      () => ['lms', 'stats'] as const,
+  lmsOrders:     () => ['lms', 'orders'] as const,
+  lmsRegs:       () => ['lms', 'registrations'] as const,
 }

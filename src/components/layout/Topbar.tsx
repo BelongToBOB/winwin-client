@@ -15,6 +15,7 @@ const titleMap: Record<string, { title: string; subtitle: string }> = {
   '/crm': { title: 'ติดตามลูกค้า', subtitle: 'ติดตามสถานะการขายและการกู้' },
   '/report': { title: 'รายงาน', subtitle: 'สร้างและส่งออกรายงาน' },
   '/online-courses/business-health-check': { title: 'Business Health Check', subtitle: 'รายชื่อผู้ลงทะเบียนคอร์ส BHC' },
+  '/lms-orders': { title: 'LMS Orders', subtitle: 'คำสั่งซื้อคอร์สออนไลน์ + retry enrollment/email' },
   '/online-courses/bank-uncensored': { title: 'Bank Uncensored', subtitle: 'จัดการรหัสคอร์ส BUC' },
 }
 

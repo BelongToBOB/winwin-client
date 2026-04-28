@@ -6,6 +6,19 @@ export const api = axios.create({
   timeout: 10_000,
 })
 
+export const lmsApi = axios.create({
+  baseURL: import.meta.env.VITE_LMS_API_URL ?? 'https://checkout.winwinwealth.co/api',
+  timeout: 15_000,
+})
+
+lmsApi.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    console.error('[LMS API Error]', err.response?.data ?? err.message)
+    return Promise.reject(err)
+  }
+)
+
 api.interceptors.response.use(
   (res) => res,
   (err) => {
