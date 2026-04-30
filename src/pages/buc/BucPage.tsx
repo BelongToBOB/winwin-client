@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useBucStats, useBucList, useDeleteBuc } from './hooks/useBuc'
+import { useBucStats, useBucList, useDeleteBuc, useSendWelcomeEmail } from './hooks/useBuc'
 import { BucDrawer } from './components/BucDrawer'
 import { confirmDelete } from '@/lib/confirm'
 import { notify } from '@/lib/toast'
@@ -40,6 +40,7 @@ export function BucPage() {
   const { data: stats, isLoading: statsLoading } = useBucStats()
   const { data: list, isLoading: listLoading } = useBucList(statusFilter || undefined)
   const deleteBuc = useDeleteBuc()
+  const sendEmail = useSendWelcomeEmail()
 
   const openAdd = () => { setEditingItem(null); setDrawerOpen(true) }
   const openEdit = (item: any) => { setEditingItem(item); setDrawerOpen(true) }
@@ -56,6 +57,28 @@ export function BucPage() {
   const handleCopy = (item: any) => {
     navigator.clipboard.writeText(copyMessage(item))
     notify.success(`คัดลอกข้อความ ${item.buc_code} แล้ว`)
+  }
+
+  const handleSendEmail = (item: any) => {
+    if (!item.customer_email) {
+      notify.error('ไม่มีอีเมลลูกค้า')
+      return
+    }
+    const nameParts = (item.customer_name || '').split(' ')
+    notify.promise(
+      sendEmail.mutateAsync({
+        email: item.customer_email,
+        firstName: nameParts[0] || '',
+        lastName: nameParts.slice(1).join(' ') || '',
+        phone: item.customer_phone || '',
+        customerCode: item.buc_code,
+      }),
+      {
+        loading: 'กำลังส่ง email...',
+        success: (data: any) => data?.password ? `ส่งแล้ว — รหัส: ${data.password}` : 'ส่ง email แล้ว',
+        error: 'ส่ง email ไม่สำเร็จ',
+      },
+    )
   }
 
   const statCards = [
@@ -158,6 +181,16 @@ export function BucPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
                       </button>
+                      {item.customer_email && (
+                        <button
+                          onClick={() => handleSendEmail(item)}
+                          disabled={sendEmail.isPending}
+                          title="ส่ง Welcome Email + สร้างรหัส Community"
+                          className="h-6 px-2.5 rounded-lg text-[11px] font-medium text-[#AF52DE] bg-[#AF52DE]/10 hover:bg-[#AF52DE]/15 disabled:opacity-50 transition-colors"
+                        >
+                          📧 Send Email
+                        </button>
+                      )}
                       <button
                         onClick={() => openEdit(item)}
                         className="h-6 px-2.5 rounded-lg text-[11px] font-medium text-[#007AFF] bg-[#007AFF]/10 hover:bg-[#007AFF]/15 transition-colors"

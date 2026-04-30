@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '@/lib/api'
+import { api, lmsApi } from '@/lib/api'
 
 const BUC_KEY = ['buc']
 
@@ -38,6 +38,22 @@ export function useDeleteBuc() {
   return useMutation({
     mutationFn: (id: string) => api.delete(`/buc/${id}`).then(r => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: BUC_KEY }),
+  })
+}
+
+export function useSendWelcomeEmail() {
+  return useMutation({
+    mutationFn: (data: {
+      email: string
+      firstName: string
+      lastName: string
+      phone?: string
+      customerCode: string
+      courseTitle?: string
+    }) => lmsApi.post('/admin/send-welcome-email', {
+      ...data,
+      courseTitle: data.courseTitle || 'Bank Uncensored Course 2026',
+    }).then(r => r.data),
   })
 }
 
