@@ -1,9 +1,10 @@
-import { useVipInsideBank, useGrantVipBulk } from './hooks/useBuc'
+import { useVipInsideBank, useGrantVipBulk, useSendWelcomeEmail } from './hooks/useBuc'
 import { notify } from '@/lib/toast'
 
 export function BucVipPage() {
   const { data: vipData, isLoading: vipLoading } = useVipInsideBank()
   const grantVip = useGrantVipBulk()
+  const sendEmail = useSendWelcomeEmail()
 
   const handleGrantAll = () => {
     if (!vipData) return
@@ -76,13 +77,14 @@ export function BucVipPage() {
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden md:table-cell">เบอร์โทร</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">VIP Code</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">สถานะ</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40"></th>
               </tr>
             </thead>
             <tbody>
               {vipLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="border-b border-black/[0.06] dark:border-white/[0.06] last:border-0">
-                    <td colSpan={5} className="px-4 py-3">
+                    <td colSpan={6} className="px-4 py-3">
                       <div className="animate-pulse bg-black/[0.06] dark:bg-white/[0.08] h-6 rounded-xl w-full" />
                     </td>
                   </tr>
@@ -99,6 +101,34 @@ export function BucVipPage() {
                     {r.vip_status === 'granted' && <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#34C759]/12 text-[#34C759]">ได้รับสิทธิ์แล้ว</span>}
                     {r.vip_status === 'pending' && <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#FF9500]/12 text-[#FF9500]">รอให้สิทธิ์</span>}
                     {r.vip_status === 'no_email' && <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#FF3B30]/12 text-[#FF3B30]">ไม่มี email</span>}
+                  </td>
+                  <td className="px-4 py-3">
+                    {r.vip_status === 'granted' && r.vip_code && (
+                      <button
+                        onClick={() => {
+                          const nameParts = [r.first_name || '', r.last_name || '']
+                          notify.promise(
+                            sendEmail.mutateAsync({
+                              email: r.email,
+                              firstName: nameParts[0],
+                              lastName: nameParts[1],
+                              phone: r.phone || '',
+                              customerCode: r.vip_code,
+                              courseTitle: 'Bank Uncensored — สิทธิ์พิเศษจาก Inside Bank',
+                            }),
+                            {
+                              loading: 'กำลังส่ง email...',
+                              success: 'ส่ง email แล้ว',
+                              error: 'ส่ง email ไม่สำเร็จ',
+                            },
+                          )
+                        }}
+                        disabled={sendEmail.isPending}
+                        className="h-6 px-2.5 rounded-lg text-[11px] font-medium text-[#AF52DE] bg-[#AF52DE]/10 hover:bg-[#AF52DE]/15 disabled:opacity-50 transition-colors"
+                      >
+                        Send Email
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
