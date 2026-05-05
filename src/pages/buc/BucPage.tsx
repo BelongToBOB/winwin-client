@@ -41,7 +41,6 @@ export function BucPage() {
   const { data: list, isLoading: listLoading } = useBucList(statusFilter || undefined)
   const deleteBuc = useDeleteBuc()
   const sendEmail = useSendWelcomeEmail()
-
   const openAdd = () => { setEditingItem(null); setDrawerOpen(true) }
   const openEdit = (item: any) => { setEditingItem(item); setDrawerOpen(true) }
 

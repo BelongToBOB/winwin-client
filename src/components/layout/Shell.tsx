@@ -102,6 +102,20 @@ export function Shell() {
                   Bank Uncensored
                 </NavLink>
                 <NavLink
+                  to="/online-courses/bank-uncensored-vip"
+                  onClick={() => setSidebarOpen(false)}
+                  className={({ isActive }) =>
+                    cn(
+                      'flex items-center gap-2 px-2 py-1.5 rounded-lg text-[12px] transition-all duration-150',
+                      isActive
+                        ? 'bg-[#FF9500]/10 text-[#FF9500] font-medium'
+                        : 'text-black/60 dark:text-white/60 hover:bg-black/[0.04] dark:hover:bg-white/[0.06]'
+                    )
+                  }
+                >
+                  Bank Uncensored VIP
+                </NavLink>
+                <NavLink
                   to="/online-courses/business-health-check"
                   onClick={() => setSidebarOpen(false)}
                   className={({ isActive }) =>

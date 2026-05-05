@@ -41,6 +41,23 @@ export function useDeleteBuc() {
   })
 }
 
+const VIP_KEY = ['vip', 'inside-bank']
+
+export function useVipInsideBank() {
+  return useQuery({
+    queryKey: VIP_KEY,
+    queryFn: () => api.get('/buc/vip/inside-bank').then(r => r.data),
+  })
+}
+
+export function useGrantVipBulk() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: any) => lmsApi.post('/admin/vip-grant/bulk', data).then(r => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: VIP_KEY }),
+  })
+}
+
 export function useSendWelcomeEmail() {
   return useMutation({
     mutationFn: (data: {
