@@ -55,6 +55,23 @@
   }
 }
 
+/* ===== Select / Dropdown — Windows compatibility ===== */
+select {
+  border: 1px solid var(--separator-opaque) !important;
+  background-color: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+}
+
+select option {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+select optgroup {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
 .swal2-popup {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif !important;
   border-radius: 16px !important;
