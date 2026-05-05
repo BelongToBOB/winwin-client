@@ -239,6 +239,56 @@ export function LmsOrdersPage() {
 
             <div className="h-px w-full bg-black/[0.08] dark:bg-white/[0.08]" />
 
+            {/* Survey Data */}
+            {selected.survey ? (
+              <div>
+                <div className="text-[12px] font-semibold text-black/60 dark:text-white/60 uppercase tracking-wide mb-3">แบบสอบถาม</div>
+                <div className="grid grid-cols-2 gap-4 text-[13px] mb-3">
+                  <div>
+                    <div className="text-black/40 dark:text-white/40 mb-1">ช่องทางที่รู้จัก</div>
+                    <div className="text-black/80 dark:text-white/80">{selected.survey.source.join(', ') || '-'}</div>
+                  </div>
+                  <div>
+                    <div className="text-black/40 dark:text-white/40 mb-1">ระดับประสบการณ์</div>
+                    <div className="text-black/80 dark:text-white/80">{selected.survey.skillLevel || '-'}</div>
+                  </div>
+                </div>
+                <div className="text-[13px] mb-3">
+                  <div className="text-black/40 dark:text-white/40 mb-1">เป้าหมาย</div>
+                  <div className="text-black/80 dark:text-white/80">{selected.survey.goal.join(', ') || '-'}</div>
+                </div>
+                {selected.survey.interestedTopics && (
+                  <div className="text-[13px] mb-3">
+                    <div className="text-black/40 dark:text-white/40 mb-1">หัวข้อที่สนใจ</div>
+                    <div className="text-black/80 dark:text-white/80">{selected.survey.interestedTopics}</div>
+                  </div>
+                )}
+                {selected.survey.needsReceipt && (
+                  <div className="rounded-xl bg-[#007AFF]/5 border border-[#007AFF]/15 p-3 mb-3">
+                    <div className="text-[12px] font-semibold text-[#007AFF] mb-2">📄 ใบกำกับภาษี</div>
+                    <div className="grid grid-cols-2 gap-2 text-[12px]">
+                      <div><span className="text-black/40 dark:text-white/40">ประเภท:</span> <span className="text-black/80 dark:text-white/80">{selected.survey.receiptType === 'company' ? 'นิติบุคคล' : 'บุคคลธรรมดา'}</span></div>
+                      <div><span className="text-black/40 dark:text-white/40">ชื่อ:</span> <span className="text-black/80 dark:text-white/80">{selected.survey.receiptName}</span></div>
+                      <div className="col-span-2"><span className="text-black/40 dark:text-white/40">Tax ID:</span> <span className="text-black/80 dark:text-white/80">{selected.survey.receiptTaxId}</span></div>
+                      <div className="col-span-2"><span className="text-black/40 dark:text-white/40">ที่อยู่:</span> <span className="text-black/80 dark:text-white/80">{selected.survey.receiptAddress}</span></div>
+                      <div className="col-span-2"><span className="text-black/40 dark:text-white/40">อีเมล:</span> <span className="text-black/80 dark:text-white/80">{selected.survey.receiptEmail}</span></div>
+                    </div>
+                  </div>
+                )}
+                {selected.survey.needsWithholding && (
+                  <div className="rounded-xl bg-[#FF9500]/5 border border-[#FF9500]/15 p-3">
+                    <div className="text-[12px] font-semibold text-[#FF9500] mb-1">🧾 หัก ณ ที่จ่าย 3%</div>
+                    <div className="text-[12px] text-black/70 dark:text-white/70">เบอร์ติดต่อ: {selected.survey.withholdingContact}</div>
+                    <div className="text-[12px] text-black/50 dark:text-white/50">รับทราบ: {selected.survey.withholdingAcknowledged ? '✅' : '❌'}</div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-[13px] text-black/40 dark:text-white/40 italic">ยังไม่ได้กรอกแบบสอบถาม</div>
+            )}
+
+            <div className="h-px w-full bg-black/[0.08] dark:bg-white/[0.08]" />
+
             {/* Retry Actions */}
             <div className="flex gap-2">
               <button

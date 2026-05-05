@@ -25,6 +25,22 @@ export interface LmsRegistration {
   createdAt: string
   course: { title: string; slug: string }
   orders: { orderNo: string; status: string; channelCode: string; amount: string; paidAt: string | null }[]
+  survey: {
+    source: string[]
+    skillLevel: string | null
+    goal: string[]
+    interestedTopics: string | null
+    needsReceipt: boolean
+    receiptType: string | null
+    receiptName: string | null
+    receiptAddress: string | null
+    receiptTaxId: string | null
+    receiptEmail: string | null
+    needsWithholding: boolean
+    withholdingContact: string | null
+    withholdingAcknowledged: boolean
+    createdAt: string
+  } | null
 }
 
 export function useLmsStats() {

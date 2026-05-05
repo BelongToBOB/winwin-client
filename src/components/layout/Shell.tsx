@@ -9,6 +9,7 @@ const navItems = [
   { to: '/seminars',       label: 'สัมมนา',       dot: 'bg-[#AF52DE]' },
   { to: '/registrations',  label: 'ผู้ลงทะเบียน',  dot: 'bg-emerald-500' },
   { to: '/report',         label: 'รายงาน',         dot: 'bg-gray-400' },
+  { to: '/private-consult', label: 'Private Consult', dot: 'bg-[#AF52DE]' },
   { to: '/lms-orders',    label: 'LMS Orders',     dot: 'bg-[#FF9500]' },
 ]
 
