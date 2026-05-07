@@ -24,7 +24,7 @@ export interface LmsRegistration {
   welcomeEmailSentAt: string | null
   createdAt: string
   course: { title: string; slug: string }
-  orders: { orderNo: string; status: string; channelCode: string; amount: string; paidAt: string | null }[]
+  orders: { orderNo: string; status: string; channelCode: string; amount: string; paidAt: string | null; manualReview: boolean; slipVerified: boolean; slipTransactionId: string | null }[]
   survey: {
     source: string[]
     skillLevel: string | null
@@ -64,6 +64,14 @@ export function useRetryEnrollment() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['lms'] })
     },
+  })
+}
+
+export function useApproveSlip() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => lmsApi.post(`/admin/registrations/${id}/approve-slip`).then(r => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['lms'] }),
   })
 }
 

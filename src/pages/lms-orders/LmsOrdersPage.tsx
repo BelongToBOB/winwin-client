@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLmsStats, useLmsRegistrations, useRetryEnrollment, useRetryEmail } from './hooks/useLmsAdmin'
+import { useLmsStats, useLmsRegistrations, useRetryEnrollment, useRetryEmail, useApproveSlip } from './hooks/useLmsAdmin'
 import type { LmsRegistration } from './hooks/useLmsAdmin'
 import { Drawer } from '@/components/ui/Drawer'
 import { notify } from '@/lib/toast'
@@ -15,6 +15,7 @@ const statusBadge = (status: string) => {
     PAYMENT_FAILED:    { label: 'ชำระไม่สำเร็จ', cls: 'bg-[#FF3B30]/10 text-[#FF3B30]' },
     CANCELLED:         { label: 'ยกเลิก',     cls: 'bg-black/[0.06] text-black/40 dark:bg-white/[0.06] dark:text-white/40' },
     ENROLLMENT_FAILED: { label: 'Enroll ผิดพลาด', cls: 'bg-[#FF3B30]/10 text-[#FF3B30]' },
+    VIP_GRANT:         { label: 'VIP',            cls: 'bg-[#FF9500]/12 text-[#FF9500]' },
   }
   const s = map[status] || { label: status, cls: 'bg-black/[0.06] text-black/40' }
   return <span className={`inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-medium ${s.cls}`}>{s.label}</span>
@@ -26,10 +27,14 @@ export function LmsOrdersPage() {
   const retryEnrollment = useRetryEnrollment()
   const retryEmail = useRetryEmail()
 
+  const approveSlip = useApproveSlip()
+
   const [selected, setSelected] = useState<LmsRegistration | null>(null)
   const [search, setSearch] = useState('')
+  const [showManualOnly, setShowManualOnly] = useState(false)
 
   const filtered = (regs || []).filter(r => {
+    if (showManualOnly && !r.orders.some(o => o.manualReview)) return false
     if (!search) return true
     const q = search.toLowerCase()
     return r.firstName.toLowerCase().includes(q) || r.lastName.toLowerCase().includes(q) ||
@@ -87,7 +92,15 @@ export function LmsOrdersPage() {
             className="w-full h-9 pl-9 pr-3 rounded-xl text-[13px] bg-black/[0.04] dark:bg-white/[0.06] border border-black/[0.08] dark:border-white/[0.08] text-black/80 dark:text-white/80 focus:outline-none focus:ring-2 focus:ring-[#007AFF]/30 placeholder:text-black/30 dark:placeholder:text-white/30"
           />
         </div>
-        <div className="text-xs text-black/40 dark:text-white/40">{filtered.length} รายการ</div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowManualOnly(!showManualOnly)}
+            className={`h-9 px-3 rounded-xl text-[12px] font-medium transition-colors ${showManualOnly ? 'bg-[#FF9500] text-white' : 'bg-[#FF9500]/10 text-[#FF9500]'}`}
+          >
+            รอตรวจสลิป
+          </button>
+          <span className="text-xs text-black/40 dark:text-white/40">{filtered.length} รายการ</span>
+        </div>
       </div>
 
       {/* Table */}
@@ -186,6 +199,10 @@ export function LmsOrdersPage() {
                 <div className="text-black/80 dark:text-white/80">{selected.phone || '-'}</div>
               </div>
               <div>
+                <div className="text-black/40 dark:text-white/40 mb-1">Line ID</div>
+                <div className="text-black/80 dark:text-white/80">{selected.lineId || '-'}</div>
+              </div>
+              <div>
                 <div className="text-black/40 dark:text-white/40 mb-1">คอร์ส</div>
                 <div className="text-black/80 dark:text-white/80">{selected.course.title}</div>
               </div>
@@ -215,6 +232,26 @@ export function LmsOrdersPage() {
                 </div>
               ))}
             </div>
+
+            {selected.orders.some(o => o.manualReview) && (
+              <div className="rounded-xl bg-[#FF9500]/8 border border-[#FF9500]/20 p-4">
+                <div className="text-[12px] font-semibold text-[#FF9500] mb-3">รอตรวจสลิป</div>
+                {selected.orders.filter(o => o.manualReview).map(o => (
+                  <div key={o.orderNo} className="text-[13px] mb-2">
+                    <div className="text-black/40 dark:text-white/40 mb-1">Transaction ID</div>
+                    <div className="text-black/80 dark:text-white/80 font-mono text-[12px]">
+                      {o.slipTransactionId || 'ตรวจ QR ไม่ได้ (K BIZ / LINE Pay)'}
+                    </div>
+                    <div className="text-[11px] mt-1">
+                      {o.slipVerified
+                        ? <span className="text-[#34C759]">EasySlip ยืนยันแล้ว</span>
+                        : <span className="text-[#FF9500]">ต้องตรวจ Statement ด้วยตนเอง</span>
+                      }
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div className="h-px w-full bg-black/[0.08] dark:bg-white/[0.08]" />
 
@@ -289,8 +326,22 @@ export function LmsOrdersPage() {
 
             <div className="h-px w-full bg-black/[0.08] dark:bg-white/[0.08]" />
 
-            {/* Retry Actions */}
-            <div className="flex gap-2">
+            {/* Actions */}
+            <div className="flex gap-2 flex-wrap">
+              {selected.orders.some(o => o.manualReview) && (
+                <button
+                  onClick={() => {
+                    notify.promise(
+                      approveSlip.mutateAsync(selected.id),
+                      { loading: 'กำลัง approve สลิป...', success: 'Approve สำเร็จ — enroll + email แล้ว', error: 'Approve ไม่สำเร็จ' },
+                    )
+                  }}
+                  disabled={approveSlip.isPending}
+                  className="h-8 px-4 rounded-xl text-[12px] font-medium text-white bg-[#34C759] hover:bg-[#34C759]/90 disabled:opacity-50 transition-colors"
+                >
+                  Approve สลิป
+                </button>
+              )}
               <button
                 onClick={() => handleRetryEnroll(selected.id)}
                 disabled={retryEnrollment.isPending}
