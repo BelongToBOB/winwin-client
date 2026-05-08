@@ -76,9 +76,11 @@ export function BhcPage() {
           <table className="w-full text-[13px]">
             <thead>
               <tr className="border-b border-black/[0.06] dark:border-white/[0.06]">
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">รหัส BHC</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">ชื่อ–นามสกุล</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden sm:table-cell">ชื่อเล่น</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40">เบอร์โทร</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden md:table-cell">อีเมล</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden md:table-cell">Facebook</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden lg:table-cell">ช่องทาง</th>
                 <th className="px-4 py-2.5 text-left text-[11px] font-medium tracking-wide uppercase text-black/40 dark:text-white/40 hidden sm:table-cell">วันลงทะเบียน</th>
@@ -89,7 +91,7 @@ export function BhcPage() {
               {isLoading ? (
                 Array.from({ length: 6 }).map((_, i) => (
                   <tr key={i} className="border-b border-black/[0.06] dark:border-white/[0.06] last:border-0">
-                    <td colSpan={7} className="px-4 py-3">
+                    <td colSpan={9} className="px-4 py-3">
                       <div className="animate-pulse bg-black/[0.06] dark:bg-white/[0.08] h-10 rounded-xl w-full"></div>
                     </td>
                   </tr>
@@ -100,9 +102,11 @@ export function BhcPage() {
                   onClick={() => setSelected(reg)}
                   className="hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors border-b border-black/[0.06] dark:border-white/[0.06] last:border-0 cursor-pointer"
                 >
+                  <td className="px-4 py-3 font-mono text-[12px] text-black/80 dark:text-white/80 font-medium">{reg.bhc_code || '—'}</td>
                   <td className="px-4 py-3 text-black/80 dark:text-white/80 font-medium">{reg.full_name}</td>
                   <td className="px-4 py-3 text-black/80 dark:text-white/80 hidden sm:table-cell">{reg.nickname}</td>
                   <td className="px-4 py-3 text-black/80 dark:text-white/80 tabular-nums">{reg.phone}</td>
+                  <td className="px-4 py-3 text-black/80 dark:text-white/80 hidden md:table-cell">{reg.email || '—'}</td>
                   <td className="px-4 py-3 text-black/80 dark:text-white/80 hidden md:table-cell">{reg.facebook_name}</td>
                   <td className="px-4 py-3 hidden lg:table-cell">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#AF52DE]/12 text-[#AF52DE]">
@@ -131,7 +135,7 @@ export function BhcPage() {
               ))}
               {!isLoading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-16 text-center text-black/40 dark:text-white/40">
+                  <td colSpan={9} className="px-4 py-16 text-center text-black/40 dark:text-white/40">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <svg className="w-10 h-10 text-black/20 dark:text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 4v16m8-8H4" />
@@ -175,7 +179,18 @@ export function BhcPage() {
 
             <div className="h-px w-full bg-black/[0.08] dark:bg-white/[0.08]" />
 
+            {selected.bhc_code && (
+              <div className="p-3 rounded-xl bg-[#1e3a5f] text-white text-center">
+                <div className="text-[11px] opacity-70 mb-1">รหัส BHC</div>
+                <div className="text-[22px] font-bold tracking-widest font-mono">{selected.bhc_code}</div>
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-4 text-[13px]">
+              <div>
+                <div className="text-black/40 dark:text-white/40 mb-1">อีเมล</div>
+                <div className="text-black/80 dark:text-white/80">{selected.email || '—'}</div>
+              </div>
               <div>
                 <div className="text-black/40 dark:text-white/40 mb-1">เบอร์โทร</div>
                 <div className="text-black/80 dark:text-white/80">{selected.phone}</div>
@@ -191,6 +206,17 @@ export function BhcPage() {
               <div>
                 <div className="text-black/40 dark:text-white/40 mb-1">วันลงทะเบียน</div>
                 <div className="text-black/80 dark:text-white/80">{formatDate(selected.created_at)}</div>
+              </div>
+              <div>
+                <div className="text-black/40 dark:text-white/40 mb-1">สถานะ</div>
+                <div className="flex flex-col gap-1">
+                  <span className={`inline-flex items-center gap-1 text-[11px] ${selected.enrolled_at ? 'text-[#34C759]' : 'text-black/30 dark:text-white/30'}`}>
+                    {selected.enrolled_at ? '✓' : '○'} Community
+                  </span>
+                  <span className={`inline-flex items-center gap-1 text-[11px] ${selected.email_sent_at ? 'text-[#34C759]' : 'text-black/30 dark:text-white/30'}`}>
+                    {selected.email_sent_at ? '✓' : '○'} Email
+                  </span>
+                </div>
               </div>
             </div>
 
